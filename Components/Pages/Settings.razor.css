@@ -1,0 +1,115 @@
+.settings-container {
+  max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.settings-header {
+    margin-bottom: 32px;
+}
+
+.settings-section {
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    background: var(--mud-palette-surface);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.section-subtitle {
+    margin-bottom: 20px;
+}
+
+.theme-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.theme-mode-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px 24px;
+    border: 2px solid var(--mud-palette-divider);
+    border-radius: 8px;
+    background: var(--mud-palette-surface);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--mud-palette-text-primary);
+}
+
+.theme-mode-btn:hover {
+    border-color: var(--mud-palette-primary);
+  background: var(--mud-palette-action-default-hover);
+}
+
+.theme-mode-btn.active {
+    border-color: var(--mud-palette-primary);
+    background: var(--mud-palette-primary);
+    color: white;
+}
+
+.theme-mode-btn.active .mud-icon-root {
+    color: white !important;
+}
+
+.theme-mode-btn .mud-icon-root {
+    color: var(--mud-palette-text-primary);
+}
+
+.change-pin-button {
+    margin-top: 16px;
+    height: 56px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* Change PIN Dialog Styles */
+.dialog-title {
+    display: flex;
+    align-items: center;
+ gap: 8px;
+}
+
+.change-pin-form {
+  padding: 8px 0;
+}
+
+.change-pin-form .mud-input-control {
+    margin-bottom: 16px;
+}
+
+.change-pin-form .mud-input-outlined {
+    border-radius: 8px;
+}
+
+.change-pin-form .mud-input-helper-text {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+    .settings-container {
+ padding: 16px;
+    }
+
+    .theme-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .change-pin-form {
+        padding: 4px 0;
+    }
+}

@@ -1,10 +1,18 @@
 ﻿/*#if (SampleContent)*/
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+
+/* Emoji rendering support */
+.emoji {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
 }
 
 a, .btn-link {
-    color: #006bb7;
+  color: #006bb7;
 }
 
 .btn-primary {
