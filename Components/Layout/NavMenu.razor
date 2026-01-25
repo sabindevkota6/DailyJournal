@@ -1,27 +1,48 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">DailyJournal</a>
+﻿@using MudBlazor
+@inject NavigationManager Nav
+
+<div class="nav-menu">
+    <div class="nav-header">
+        <MudIcon Icon="@Icons.Material.Filled.Book" Style="margin-right: 8px;" />
+        <span>Daily Journal</span>
     </div>
-</div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <MudButton Variant="Variant.Filled" 
+               Color="MudColor.Primary" 
+               FullWidth="true" 
+               StartIcon="@Icons.Material.Filled.Add"
+               OnClick="@(() => Nav.NavigateTo("/new-entry"))"
+               Style="margin: 16px 0; text-transform: none; justify-content: flex-start; padding-left: 16px;">
+        New Entry
+    </MudButton>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+    <nav class="nav-links">
+        <NavLink href="dashboard" class="nav-link-item">
+            <MudIcon Icon="@Icons.Material.Filled.Dashboard" Size="MudSize.Small" />
+            <span>Dashboard</span>
+        </NavLink>
+
+        <NavLink href="timeline" class="nav-link-item">
+            <MudIcon Icon="@Icons.Material.Filled.Timeline" Size="MudSize.Small" />
+            <span>All Entries</span>
+        </NavLink>
+
+        <NavLink href="calendar" class="nav-link-item">
+            <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Size="MudSize.Small" />
+            <span>Calendar</span>
+        </NavLink>
+
+        <NavLink href="export" class="nav-link-item">
+            <MudIcon Icon="@Icons.Material.Filled.FileDownload" Size="MudSize.Small" />
+            <span>Export</span>
+        </NavLink>
+
+        <NavLink href="settings" class="nav-link-item">
+            <MudIcon Icon="@Icons.Material.Filled.Settings" Size="MudSize.Small" />
+            <span>Settings</span>
+        </NavLink>
     </nav>
 </div>
+
+@code {
+}

@@ -1,17 +1,41 @@
 ﻿@inherits LayoutComponentBase
+@using DailyJournal.Core.Services
+@using MudBlazor
+@implements IDisposable
+@inject IThemeService ThemeService
+
+<MudThemeProvider Theme="@_theme" IsDarkMode="@ThemeService.IsDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <main> 
 
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@code {
+    private readonly MudTheme _theme = new();
+
+    protected override void OnInitialized()
+    {
+        ThemeService.Changed += OnThemeUpdated;
+    }
+
+    private void OnThemeUpdated() => InvokeAsync(StateHasChanged);
+
+    private Task OnThemeChanged(AppThemeMode mode) => ThemeService.SetModeAsync(mode);
+
+    public void Dispose()
+    {
+        ThemeService.Changed -= OnThemeUpdated;
+    }
+}
