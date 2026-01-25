@@ -28,6 +28,7 @@ namespace DailyJournal
             builder.Services.AddSingleton<IJournalService, JournalService>();
             builder.Services.AddSingleton<IDashboardService, DashboardService>();
             builder.Services.AddSingleton<IPdfService, Pdfservices>();
+            builder.Services.AddSingleton<IThemeService, ThemeService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

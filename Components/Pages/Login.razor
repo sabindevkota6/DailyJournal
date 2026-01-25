@@ -1,0 +1,127 @@
+﻿@page "/Login"
+@layout DailyJournal.Components.Layout.EmptyLayout
+@inject DailyJournal.Core.Services.IUserService UserService
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@using MudBlazor
+
+<MudThemeProvider Theme="@_theme" IsDarkMode="false" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="login-container">
+    <div class="login-card">
+        <!-- Lock Icon with Circle Background -->
+        <div class="lock-icon-wrapper">
+            <div class="lock-icon-circle">
+                <MudIcon Icon="@Icons.Material.Outlined.Lock" Size="Size.Large" Color="Color.Default"
+                         Style="color: #8b7355;" />
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="login-title">Daily Journal</div>
+
+        <!-- Subtitle -->
+        <div class="login-subtitle">Your personal space for reflection</div>
+
+        <!-- PIN Input Field -->
+        <div class="pin-input-wrapper">
+            <MudTextField @bind-Value="pinInput"
+                          InputType="pinInputType"
+                          Placeholder="Enter your pin"
+                          MaxLength="4"
+                          Variant="Variant.Outlined"
+                          Class="pin-textfield"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@eyeIcon"
+                          OnAdornmentClick="TogglePinVisibility"
+                          DisableUnderLine="true" />
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message">
+            @errorMessage
+        </div>
+
+        <!-- Unlock Button -->
+        <MudButton Variant="Variant.Filled"
+                   FullWidth="true"
+                   Class="unlock-button"
+                   OnClick="Submit">
+            @buttonText
+        </MudButton>
+
+        <!-- Failed Attempts (only show if has PIN and failed attempts > 0) -->
+        @if (hasPin && failedAttempts > 0)
+        {
+            <div class="failed-attempts">
+                Failed attempts: @failedAttempts
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private readonly MudTheme _theme = new();
+    private string pinInput = "";
+    private string errorMessage = "";
+    private int failedAttempts = 0;
+    private bool hasPin;
+    private bool showPin = false;
+
+    private InputType pinInputType => showPin ? InputType.Text : InputType.Password;
+    private string eyeIcon => showPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+    private string buttonText => hasPin ? "Unlock Journal" : "Set PIN";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            hasPin = await UserService.HasPinAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading PIN system";
+            System.Diagnostics.Debug.WriteLine(ex);
+        }
+    }
+
+    private void TogglePinVisibility() => showPin = !showPin;
+
+    private async Task Submit()
+    {
+        errorMessage = "";
+
+        if (pinInput.Length != 4 || !int.TryParse(pinInput, out int pin))
+        {
+            errorMessage = "Incorrect PIN. Please try again.";
+            return;
+        }
+
+        if (!hasPin)
+        {
+            await UserService.CreatePinAsync(pin);
+            hasPin = true;
+            Snackbar.Add("PIN created successfully! Welcome to Daily Journal.", Severity.Success);
+            Nav.NavigateTo("/new-entry", forceLoad: true);
+            return;
+        }
+
+        var valid = await UserService.ValidatePinAsync(pin);
+
+        if (valid)
+        {
+            Snackbar.Add("Welcome back! Login successful.", Severity.Success);
+            Nav.NavigateTo("/new-entry", forceLoad: true);
+        }
+        else
+        {
+            failedAttempts++;
+            errorMessage = "Incorrect PIN. Please try again.";
+            pinInput = "";
+            Snackbar.Add("Invalid PIN. Please try again.", Severity.Error);
+        }
+    }
+}

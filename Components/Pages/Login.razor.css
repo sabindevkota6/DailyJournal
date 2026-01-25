@@ -1,0 +1,126 @@
+.login-container {
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #e8dcc8;
+  padding: 20px;
+}
+
+.login-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.lock-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.lock-icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f5ecd7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .lock-icon-circle ::deep .mud-icon-root {
+   font-size: 2.5rem;
+    }
+
+.login-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #3d332d;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    font-size: 0.9rem;
+    color: #8b7b72;
+    margin-bottom: 32px;
+}
+
+.pin-input-wrapper {
+    margin-bottom: 12px;
+}
+
+.pin-input-wrapper ::deep .mud-input-root {
+    border-radius: 8px;
+}
+
+.pin-input-wrapper ::deep .mud-input-outlined .mud-input-outlined-border {
+    border-color: #d4c4b8;
+}
+
+.pin-input-wrapper ::deep .mud-input-outlined:hover .mud-input-outlined-border {
+    border-color: #9b7b63;
+}
+
+.pin-input-wrapper ::deep .mud-input-outlined.mud-input-focused .mud-input-outlined-border {
+    border-color: #9b7b63;
+    border-width: 2px;
+}
+
+.pin-input-wrapper ::deep .mud-input-text {
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+}
+
+.pin-input-wrapper ::deep .mud-input-adornment .mud-icon-root {
+    color: #8b7355;
+}
+
+.error-message {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    min-height: 20px;
+}
+
+.unlock-button {
+  margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+.unlock-button ::deep.mud-button-root {
+    background-color: #9b7b63 !important;
+    color: white !important;
+    border-radius: 8px;
+    padding: 14px;
+    text-transform: none;
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(155, 123, 99, 0.3);
+}
+
+    .unlock-button ::deep.mud-button-root:hover {
+        background-color: #8b6b53 !important;
+ box-shadow: 0 3px 6px rgba(155, 123, 99, 0.4);
+    }
+
+.failed-attempts {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 32px 24px;
+    }
+
+    .login-title {
+        font-size: 1.3rem;
+    }
+}
