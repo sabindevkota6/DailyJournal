@@ -1,0 +1,32 @@
+.change-pin-form {
+    padding: 8px 0;
+}
+
+.change-pin-form .mud-input-control {
+    margin-bottom: 16px;
+}
+
+.change-pin-form .mud-input-outlined {
+    border-radius: 8px;
+}
+
+.change-pin-form .mud-input-helper-text {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.change-pin-form .mb-3 {
+    margin-bottom: 16px;
+}
+
+.change-pin-form .mb-4 {
+    margin-bottom: 24px;
+}
+
+.change-pin-form .mt-4 {
+    margin-top: 24px;
+}
+
+.change-pin-form .text-center {
+    text-align: center;
+}
