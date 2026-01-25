@@ -11,5 +11,6 @@ namespace DailyJournal.Core.Services
         Task<bool> HasPinAsync();
         Task CreatePinAsync(int pin);
         Task<bool> ValidatePinAsync(int pin);
+        Task<bool> ChangePinAsync(int oldPin, int newPin);
     }
 }
