@@ -46,6 +46,8 @@ namespace DailyJournal.Data.Models
  [Indexed(Unique = true)]
  public DateTime Date { get; set; }
 
+ public string Title { get; set; } = string.Empty;
+
  public string Content { get; set; } = string.Empty;
 
  // Content mode: HTML (Quill) or Markdown

@@ -57,6 +57,7 @@ namespace DailyJournal.Data.Services
 
         public async Task<JournalEntry> CreateEntryAsync(
             DateTime date,
+            string title,
             string content,
             bool isMarkdown,
             Mood primaryMood,
@@ -89,6 +90,7 @@ namespace DailyJournal.Data.Services
                 var entry = new JournalEntry
                 {
                     Date = d,
+                    Title = title ?? string.Empty,
                     Content = content ?? string.Empty,
                     IsMarkdown = isMarkdown,
                     PrimaryMood = primaryMood,
@@ -110,6 +112,7 @@ namespace DailyJournal.Data.Services
 
         public async Task<JournalEntry> UpdateEntryAsync(
             Guid id,
+            string title,
             string content,
             bool isMarkdown,
             Mood primaryMood,
@@ -138,6 +141,7 @@ namespace DailyJournal.Data.Services
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
 
+                existing.Title = title ?? string.Empty;
                 existing.Content = content ?? string.Empty;
                 existing.IsMarkdown = isMarkdown;
                 existing.PrimaryMood = primaryMood;
@@ -158,6 +162,7 @@ namespace DailyJournal.Data.Services
         // Backward compat wrapper.
         public async Task<JournalEntry> CreateOrUpdateEntryAsync(
             DateTime date,
+            string title,
             string content,
             bool isMarkdown,
             Mood primaryMood,
@@ -176,7 +181,7 @@ namespace DailyJournal.Data.Services
                 {
                     try
                     {
-                        return await CreateEntryAsync(d, content, isMarkdown, primaryMood, secondaryMoods, category, tags);
+                        return await CreateEntryAsync(d, title, content, isMarkdown, primaryMood, secondaryMoods, category, tags);
                     }
                     catch (SQLiteException)
                     {
@@ -184,11 +189,11 @@ namespace DailyJournal.Data.Services
                         var again = await GetEntryByDateAsync(d);
                         if (again == null) throw;
 
-                        return await UpdateEntryAsync(again.Id, content, isMarkdown, primaryMood, secondaryMoods, category, tags);
+                        return await UpdateEntryAsync(again.Id, title, content, isMarkdown, primaryMood, secondaryMoods, category, tags);
                     }
                 }
 
-                return await UpdateEntryAsync(existing.Id, content, isMarkdown, primaryMood, secondaryMoods, category, tags);
+                return await UpdateEntryAsync(existing.Id, title, content, isMarkdown, primaryMood, secondaryMoods, category, tags);
             }
             catch (Exception ex)
             {
@@ -210,6 +215,22 @@ namespace DailyJournal.Data.Services
             catch (Exception ex)
             {
                 throw new ApplicationException("DeleteEntryAsync failed", ex);
+            }
+        }
+
+        public async Task<bool> DeleteEntryByIdAsync(Guid id)
+        {
+            try
+            {
+                await InitializeTableAsync();
+                var existing = await GetEntryByIdAsync(id);
+                if (existing == null) return false;
+                await _databaseService.Connection.DeleteAsync(existing);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("DeleteEntryByIdAsync failed", ex);
             }
         }
 
