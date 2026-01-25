@@ -23,20 +23,28 @@ public class DashboardService : IDashboardService
  {
  try
  {
- var s = NormalizeDate(start);
+System.Diagnostics.Debug.WriteLine($"DashboardService: GetAnalyticsAsync called with start={start:yyyy-MM-dd}, end={end:yyyy-MM-dd}");
+ 
+  var s = NormalizeDate(start);
  var e = NormalizeDate(end);
  if (e < s) (s, e) = (e, s);
 
+         System.Diagnostics.Debug.WriteLine($"DashboardService: Normalized dates s={s:yyyy-MM-dd}, e={e:yyyy-MM-dd}");
+
  // SQLite-net can struggle translating complex projections; load & use LINQ.
- var entries = (await _databaseService.Connection.Table<JournalEntry>().ToListAsync())
+var entries = (await _databaseService.Connection.Table<JournalEntry>().ToListAsync())
  .Where(x => x.Date >= s && x.Date <= e)
  .OrderBy(x => x.Date)
  .ToList();
 
+     System.Diagnostics.Debug.WriteLine($"DashboardService: Found {entries.Count} entries in date range");
+
  var total = entries.Count;
 
  var moodDistribution = BuildMoodDistribution(entries);
- var mostFrequentMood = entries
+  System.Diagnostics.Debug.WriteLine($"DashboardService: Built mood distribution with {moodDistribution.Count} items");
+ 
+  var mostFrequentMood = entries
  .GroupBy(x => x.PrimaryMood)
  .OrderByDescending(g => g.Count())
  .Select(g => (Mood?)g.Key)
@@ -62,23 +70,20 @@ public class DashboardService : IDashboardService
  .Select(g => new TagCountItem(g.Key, g.Count()))
  .ToList();
 
- // Category breakdown (Work/Health/Travel etc.) isn't currently modeled.
- // Simple approach: treat first token before ':' as a "tag category" (e.g., "Work:Meeting").
- var tagBreakdown = entries
- .SelectMany(x => x.Tags)
- .Select(ParseTagCategory)
- .Where(c => c is not null)
- .Select(c => c!.Value)
- .GroupBy(c => c)
- .OrderByDescending(g => g.Count())
- .Select(g => new CategoryBreakdownItem(g.Key, g.Count(), Percentage(g.Count(), entries.Count ==0 ?0 : entries.Count)))
- .ToList();
+ System.Diagnostics.Debug.WriteLine($"DashboardService: Found {mostUsedTags.Count} most used tags");
+
+         // Tag breakdown: Show breakdown by mood category instead of trying to parse tags
+          // This gives a clearer picture of how entries are distributed across categories
+  var tagBreakdown = BuildCategoryBreakdown(entries);
+    System.Diagnostics.Debug.WriteLine($"DashboardService: Built category breakdown with {tagBreakdown.Count} items");
 
  var wordCountTrends = entries
  .Select(x => new WordCountTrendItem(x.Date.Date, CountWords(x.Content)))
  .ToList();
 
  var avgWords = total ==0 ?0 : wordCountTrends.Average(x => x.WordCount);
+
+     System.Diagnostics.Debug.WriteLine($"DashboardService: Completed successfully");
 
  return new DashboardAnalyticsResult(
  Start: s,
@@ -95,6 +100,7 @@ public class DashboardService : IDashboardService
  }
  catch (Exception ex)
  {
+    System.Diagnostics.Debug.WriteLine($"DashboardService ERROR: {ex}");
  throw new ApplicationException("GetAnalyticsAsync failed", ex);
  }
  }
@@ -128,6 +134,38 @@ public class DashboardService : IDashboardService
  })
  .ToList();
  }
+
+ private static IReadOnlyList<CategoryBreakdownItem> BuildCategoryBreakdown(List<JournalEntry> entries)
+{
+    if (entries.Count == 0)
+        {
+    return Enum.GetValues<Category>()
+     .Select(c => new CategoryBreakdownItem(c, 0, 0))
+         .ToList();
+   }
+
+        // Use Entry.Category when present; otherwise infer from the mood
+   static Category Infer(Mood mood) => mood switch
+     {
+    Mood.Happy or Mood.Excited or Mood.Relaxed or Mood.Grateful or Mood.Confident => Category.Positive,
+            Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => Category.Neutral,
+    _ => Category.Negative
+  };
+
+        var categorized = entries
+    .Select(e => e.Category ?? Infer(e.PrimaryMood))
+     .ToList();
+
+        return Enum.GetValues<Category>()
+ .Select(c =>
+         {
+          var count = categorized.Count(x => x == c);
+    return new CategoryBreakdownItem(c, count, Percentage(count, categorized.Count));
+            })
+.Where(item => item.Count > 0) // Only show categories that have entries
+   .OrderByDescending(item => item.Count)
+       .ToList();
+    }
 
  private static double Percentage(int part, int total)
  => total <=0 ?0 : Math.Round((double)part *100d / total,2);
@@ -178,29 +216,6 @@ public class DashboardService : IDashboardService
  {
  if (string.IsNullOrWhiteSpace(text)) return 0;
 
- // Simple word count: sequences of letters/digits
- return Regex.Matches(text, @"\b[\p{L}\p{N}]++\b").Count;
- }
-
- private static Category? ParseTagCategory(string? tag)
- {
- if (string.IsNullOrWhiteSpace(tag)) return null;
- var t = tag.Trim();
-
- // Map a few common categories; otherwise ignore.
- if (t.StartsWith("work", StringComparison.OrdinalIgnoreCase)) return Category.Neutral;
- if (t.StartsWith("health", StringComparison.OrdinalIgnoreCase)) return Category.Positive;
- if (t.StartsWith("travel", StringComparison.OrdinalIgnoreCase)) return Category.Positive;
-
- // Support format "Category:Something" -> infer category name to enum if matches.
- var idx = t.IndexOf(':');
- if (idx >0)
- {
- var head = t[..idx].Trim();
- if (Enum.TryParse<Category>(head, ignoreCase: true, out var c))
- return c;
- }
-
- return null;
+ return Regex.Matches(text, @"\b[\p{L}\p{N}]+\b").Count;
  }
 }
