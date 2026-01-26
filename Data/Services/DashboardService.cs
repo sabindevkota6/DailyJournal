@@ -17,7 +17,7 @@ public class DashboardService : IDashboardService
  _databaseService = databaseService;
  }
 
- private static DateTime NormalizeDate(DateTime date) => date.ToUniversalTime().Date;
+ private static DateTime NormalizeDate(DateTime date) => date.Date; // Changed from ToUniversalTime().Date to just .Date
 
  public async Task<DashboardAnalyticsResult> GetAnalyticsAsync(DateTime start, DateTime end, int topTags =10)
  {
