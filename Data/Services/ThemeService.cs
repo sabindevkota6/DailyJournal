@@ -13,40 +13,40 @@ public class ThemeService : IThemeService
 
  public bool IsDarkMode => Mode switch
  {
- AppThemeMode.Dark => true,
- AppThemeMode.Light => false,
- _ => Application.Current?.RequestedTheme == AppTheme.Dark
+     AppThemeMode.Dark => true,
+     AppThemeMode.Light => false,
+     _ => Application.Current?.RequestedTheme == AppTheme.Dark
  };
 
  public event Action? Changed;
 
  public Task InitializeAsync()
  {
- var stored = Preferences.Default.Get(ThemeKey, (int)AppThemeMode.System);
- Mode = Enum.IsDefined(typeof(AppThemeMode), stored) ? (AppThemeMode)stored : AppThemeMode.System;
- ApplyModeToMaui();
- Changed?.Invoke();
- return Task.CompletedTask;
- }
+        var stored = Preferences.Default.Get(ThemeKey, (int)AppThemeMode.System);
+        Mode = Enum.IsDefined(typeof(AppThemeMode), stored) ? (AppThemeMode)stored : AppThemeMode.System;
+        ApplyModeToMaui();
+        Changed?.Invoke();
+        return Task.CompletedTask;
+    }
 
  public Task SetModeAsync(AppThemeMode mode)
  {
- Mode = mode;
- Preferences.Default.Set(ThemeKey, (int)mode);
- ApplyModeToMaui();
- Changed?.Invoke();
- return Task.CompletedTask;
- }
+        Mode = mode;
+        Preferences.Default.Set(ThemeKey, (int)mode);
+        ApplyModeToMaui();
+        Changed?.Invoke();
+        return Task.CompletedTask;
+    }
 
  private void ApplyModeToMaui()
  {
- if (Application.Current is null) return;
+        if (Application.Current is null) return;
 
- Application.Current.UserAppTheme = Mode switch
- {
- AppThemeMode.Light => AppTheme.Light,
- AppThemeMode.Dark => AppTheme.Dark,
- _ => AppTheme.Unspecified
- };
- }
+        Application.Current.UserAppTheme = Mode switch
+        {
+            AppThemeMode.Light => AppTheme.Light,
+            AppThemeMode.Dark => AppTheme.Dark,
+            _ => AppTheme.Unspecified
+        };
+    }
 }

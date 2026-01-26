@@ -14,8 +14,8 @@ public class DashboardService : IDashboardService
 
  public DashboardService(IDatabaseService databaseService)
  {
- _databaseService = databaseService;
- }
+        _databaseService = databaseService;
+  }
 
  private static DateTime NormalizeDate(DateTime date) => date.Date; // Changed from ToUniversalTime().Date to just .Date
 
@@ -137,20 +137,20 @@ var entries = (await _databaseService.Connection.Table<JournalEntry>().ToListAsy
 
  private static IReadOnlyList<CategoryBreakdownItem> BuildCategoryBreakdown(List<JournalEntry> entries)
 {
-    if (entries.Count == 0)
+        if (entries.Count == 0)
         {
-    return Enum.GetValues<Category>()
-     .Select(c => new CategoryBreakdownItem(c, 0, 0))
-         .ToList();
-   }
+            return Enum.GetValues<Category>()
+             .Select(c => new CategoryBreakdownItem(c, 0, 0))
+                 .ToList();
+        }
 
         // Use Entry.Category when present; otherwise infer from the mood
-   static Category Infer(Mood mood) => mood switch
-     {
-    Mood.Happy or Mood.Excited or Mood.Relaxed or Mood.Grateful or Mood.Confident => Category.Positive,
+        static Category Infer(Mood mood) => mood switch
+        {
+            Mood.Happy or Mood.Excited or Mood.Relaxed or Mood.Grateful or Mood.Confident => Category.Positive,
             Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => Category.Neutral,
-    _ => Category.Negative
-  };
+            _ => Category.Negative
+        };
 
         var categorized = entries
     .Select(e => e.Category ?? Infer(e.PrimaryMood))
@@ -158,64 +158,64 @@ var entries = (await _databaseService.Connection.Table<JournalEntry>().ToListAsy
 
         return Enum.GetValues<Category>()
  .Select(c =>
-         {
-          var count = categorized.Count(x => x == c);
-    return new CategoryBreakdownItem(c, count, Percentage(count, categorized.Count));
-            })
+ {
+     var count = categorized.Count(x => x == c);
+     return new CategoryBreakdownItem(c, count, Percentage(count, categorized.Count));
+ })
 .Where(item => item.Count > 0) // Only show categories that have entries
    .OrderByDescending(item => item.Count)
        .ToList();
     }
 
- private static double Percentage(int part, int total)
- => total <=0 ?0 : Math.Round((double)part *100d / total,2);
+    private static double Percentage(int part, int total)
+    => total <= 0 ? 0 : Math.Round((double)part * 100d / total, 2);
 
- private static int CalculateCurrentStreak(HashSet<DateTime> datesWithEntry)
- {
- if (datesWithEntry.Count ==0) return 0;
+    private static int CalculateCurrentStreak(HashSet<DateTime> datesWithEntry)
+    {
+        if (datesWithEntry.Count == 0) return 0;
 
- var today = DateTime.UtcNow.Date;
- var anchor = datesWithEntry.Contains(today) ? today
- : (datesWithEntry.Contains(today.AddDays(-1)) ? today.AddDays(-1) : (DateTime?)null);
+        var today = DateTime.UtcNow.Date;
+        var anchor = datesWithEntry.Contains(today) ? today
+        : (datesWithEntry.Contains(today.AddDays(-1)) ? today.AddDays(-1) : (DateTime?)null);
 
- if (anchor is null) return 0;
+        if (anchor is null) return 0;
 
- var streak =0;
- while (datesWithEntry.Contains(anchor.Value.AddDays(-streak)))
- streak++;
+        var streak = 0;
+        while (datesWithEntry.Contains(anchor.Value.AddDays(-streak)))
+            streak++;
 
- return streak;
- }
+        return streak;
+    }
 
  private static int CalculateLongestStreak(HashSet<DateTime> datesWithEntry)
  {
- if (datesWithEntry.Count ==0) return 0;
+        if (datesWithEntry.Count == 0) return 0;
 
- var ordered = datesWithEntry.OrderBy(d => d).ToList();
+        var ordered = datesWithEntry.OrderBy(d => d).ToList();
 
- var best =1;
- var current =1;
+        var best = 1;
+        var current = 1;
 
- for (var i =1; i < ordered.Count; i++)
- {
- if (ordered[i] == ordered[i -1].AddDays(1))
- {
- current++;
- best = Math.Max(best, current);
- }
- else
- {
- current =1;
- }
- }
+        for (var i = 1; i < ordered.Count; i++)
+        {
+            if (ordered[i] == ordered[i - 1].AddDays(1))
+            {
+                current++;
+                best = Math.Max(best, current);
+            }
+            else
+            {
+                current = 1;
+            }
+        }
 
- return best;
- }
+        return best;
+   }
 
- private static int CountWords(string? text)
- {
- if (string.IsNullOrWhiteSpace(text)) return 0;
+    private static int CountWords(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return 0;
 
- return Regex.Matches(text, @"\b[\p{L}\p{N}]+\b").Count;
- }
+        return Regex.Matches(text, @"\b[\p{L}\p{N}]+\b").Count;
+    }
 }
