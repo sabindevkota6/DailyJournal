@@ -22,7 +22,8 @@ namespace DailyJournal.Data.Services
             await _databaseService.Connection.CreateTableAsync<JournalEntry>();
         }
 
-        private static DateTime NormalizeDate(DateTime date) => date.ToUniversalTime().Date;
+        // Changed: Keep dates as local dates instead of converting to UTC
+        private static DateTime NormalizeDate(DateTime date) => date.Date;
 
         public async Task<JournalEntry?> GetEntryByIdAsync(Guid id)
         {
@@ -70,7 +71,9 @@ namespace DailyJournal.Data.Services
                 await InitializeTableAsync();
 
                 var d = NormalizeDate(date);
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now; // Changed from DateTime.UtcNow to local time
+
+                System.Diagnostics.Debug.WriteLine($"Creating entry for date: {d:yyyy-MM-dd} (Local: {DateTime.Now:yyyy-MM-dd HH:mm:ss})");
 
                 var existing = await GetEntryByDateAsync(d);
                 if (existing != null)
@@ -102,10 +105,12 @@ namespace DailyJournal.Data.Services
                 };
 
                 await _databaseService.Connection.InsertAsync(entry);
+                System.Diagnostics.Debug.WriteLine($"Entry created successfully for {d:yyyy-MM-dd}");
                 return entry;
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"CreateEntryAsync error: {ex}");
                 throw new ApplicationException("CreateEntryAsync failed", ex);
             }
         }
@@ -128,7 +133,9 @@ namespace DailyJournal.Data.Services
                 if (existing == null)
                     throw new KeyNotFoundException($"Journal entry with id '{id}' was not found.");
 
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now; // Changed from DateTime.UtcNow to local time
+
+                System.Diagnostics.Debug.WriteLine($"Updating entry {id} (Date: {existing.Date:yyyy-MM-dd})");
 
                 var secondary = (secondaryMoods ?? Enumerable.Empty<Mood>())
                     .Distinct()
@@ -151,10 +158,12 @@ namespace DailyJournal.Data.Services
                 existing.UpdatedAt = now;
 
                 await _databaseService.Connection.UpdateAsync(existing);
+                System.Diagnostics.Debug.WriteLine($"Entry updated successfully");
                 return existing;
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"UpdateEntryAsync error: {ex}");
                 throw new ApplicationException("UpdateEntryAsync failed", ex);
             }
         }
@@ -309,7 +318,7 @@ namespace DailyJournal.Data.Services
                     .OrderByDescending(d => d)
                     .ToList();
 
-                var today = DateTime.UtcNow.Date;
+                var today = DateTime.Now.Date; 
 
                 // streak ends at today if present, otherwise yesterday if present
                 DateTime? anchor = dates.FirstOrDefault() == today ? today
