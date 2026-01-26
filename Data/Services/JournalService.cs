@@ -19,7 +19,15 @@ namespace DailyJournal.Data.Services
 
         private async Task InitializeTableAsync()
         {
-            await _databaseService.Connection.CreateTableAsync<JournalEntry>();
+            try
+            {
+                await _databaseService.Connection.CreateTableAsync<JournalEntry>();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing JournalEntry table: {ex.Message}");
+                throw;
+            }
         }
 
         // Changed: Keep dates as local dates instead of converting to UTC
@@ -36,6 +44,7 @@ namespace DailyJournal.Data.Services
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error in GetEntryByIdAsync: {ex.Message}");
                 throw new ApplicationException("GetEntryByIdAsync failed", ex);
             }
         }
@@ -52,6 +61,7 @@ namespace DailyJournal.Data.Services
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error in GetEntryByDateAsync: {ex.Message}");
                 throw new ApplicationException("GetEntryByDateAsync failed", ex);
             }
         }
@@ -77,7 +87,9 @@ namespace DailyJournal.Data.Services
 
                 var existing = await GetEntryByDateAsync(d);
                 if (existing != null)
+                {
                     throw new InvalidOperationException($"An entry already exists for date {d:yyyy-MM-dd}.");
+                }
 
                 var secondary = (secondaryMoods ?? Enumerable.Empty<Mood>())
                     .Distinct()
@@ -108,6 +120,10 @@ namespace DailyJournal.Data.Services
                 System.Diagnostics.Debug.WriteLine($"Entry created successfully for {d:yyyy-MM-dd}");
                 return entry;
             }
+            catch (InvalidOperationException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"CreateEntryAsync error: {ex}");
@@ -131,7 +147,9 @@ namespace DailyJournal.Data.Services
 
                 var existing = await GetEntryByIdAsync(id);
                 if (existing == null)
+                {
                     throw new KeyNotFoundException($"Journal entry with id '{id}' was not found.");
+                }
 
                 var now = DateTime.Now; // Changed from DateTime.UtcNow to local time
 
@@ -160,6 +178,10 @@ namespace DailyJournal.Data.Services
                 await _databaseService.Connection.UpdateAsync(existing);
                 System.Diagnostics.Debug.WriteLine($"Entry updated successfully");
                 return existing;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -206,6 +228,7 @@ namespace DailyJournal.Data.Services
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"CreateOrUpdateEntryAsync error: {ex}");
                 throw new ApplicationException("CreateOrUpdateEntryAsync failed", ex);
             }
         }
@@ -219,10 +242,12 @@ namespace DailyJournal.Data.Services
                 var existing = await GetEntryByDateAsync(d);
                 if (existing == null) return false;
                 await _databaseService.Connection.DeleteAsync(existing);
+                System.Diagnostics.Debug.WriteLine($"Entry deleted for date: {d:yyyy-MM-dd}");
                 return true;
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"DeleteEntryAsync error: {ex}");
                 throw new ApplicationException("DeleteEntryAsync failed", ex);
             }
         }
@@ -235,10 +260,12 @@ namespace DailyJournal.Data.Services
                 var existing = await GetEntryByIdAsync(id);
                 if (existing == null) return false;
                 await _databaseService.Connection.DeleteAsync(existing);
+                System.Diagnostics.Debug.WriteLine($"Entry deleted with id: {id}");
                 return true;
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"DeleteEntryByIdAsync error: {ex}");
                 throw new ApplicationException("DeleteEntryByIdAsync failed", ex);
             }
         }
@@ -254,14 +281,15 @@ namespace DailyJournal.Data.Services
             {
                 await InitializeTableAsync();
 
-                // SQLite-net has limited translation for complex conditions; use LINQ in-memory.
                 var list = await _databaseService.Connection.Table<JournalEntry>().ToListAsync();
                 var q = list.AsEnumerable();
 
                 if (!string.IsNullOrWhiteSpace(query))
                 {
                     var needle = query.Trim();
-                    q = q.Where(e => (e.Content ?? string.Empty).Contains(needle, StringComparison.OrdinalIgnoreCase));
+                    q = q.Where(e => 
+                        (e.Title ?? string.Empty).Contains(needle, StringComparison.OrdinalIgnoreCase) ||
+                        (e.Content ?? string.Empty).Contains(needle, StringComparison.OrdinalIgnoreCase));
                 }
 
                 if (start.HasValue)
@@ -296,6 +324,7 @@ namespace DailyJournal.Data.Services
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"SearchAsync error: {ex}");
                 throw new ApplicationException("SearchAsync failed", ex);
             }
         }
@@ -334,6 +363,7 @@ namespace DailyJournal.Data.Services
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"GetCurrentStreakAsync error: {ex}");
                 throw new ApplicationException("GetCurrentStreakAsync failed", ex);
             }
         }

@@ -2,9 +2,6 @@
 using DailyJournal.Data.Utils;
 using SQLite;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DailyJournal.Data.Services
@@ -17,19 +14,44 @@ namespace DailyJournal.Data.Services
         {
             get
             {
-                if (_connection == null)
-                    InitializeAsync().GetAwaiter().GetResult();
+                try
+                {
+                    if (_connection == null)
+                    {
+                        InitializeAsync().GetAwaiter().GetResult();
+                    }
 
-                return _connection!;
+                    return _connection!;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error getting database connection: {ex.Message}");
+                    throw new ApplicationException("Failed to get database connection", ex);
+                }
             }
         }
 
         public async Task InitializeAsync()
         {
-            if (_connection != null) return;
+            try
+            {
+                if (_connection != null)
+                {
+                    return;
+                }
 
-            var path = await DbConfig.GetPathAsync();
-            _connection = new SQLiteAsyncConnection(path);
+                var path = await DbConfig.GetPathAsync();
+                System.Diagnostics.Debug.WriteLine($"Initializing database at path: {path}");
+
+                _connection = new SQLiteAsyncConnection(path);
+
+                System.Diagnostics.Debug.WriteLine("Database initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing database: {ex.Message}");
+                throw new ApplicationException("Failed to initialize database", ex);
+            }
         }
     }
 }
