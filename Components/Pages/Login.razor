@@ -15,8 +15,7 @@
         <!-- Lock Icon with Circle Background -->
         <div class="lock-icon-wrapper">
             <div class="lock-icon-circle">
-                <MudIcon Icon="@Icons.Material.Outlined.Lock" Size="MudSize.Large" Color="MudColor.Default"
-                         Style="color: #8b7355;" />
+                <MudIcon Icon="@Icons.Material.Outlined.Lock" Size="MudSize.Large" />
             </div>
         </div>
 
@@ -30,22 +29,18 @@
         <div class="pin-input-wrapper">
             <MudTextField @bind-Value="pinInput"
                           InputType="pinInputType"
-                          Placeholder="Enter your pin"
+                          Placeholder="Enter 4-digit PIN"
                           MaxLength="4"
                           Variant="Variant.Outlined"
-                          Class="pin-textfield"
                           Adornment="Adornment.End"
                           AdornmentIcon="@eyeIcon"
-                          OnAdornmentClick="TogglePinVisibility"
-                          DisableUnderLine="true" />
+                          OnAdornmentClick="TogglePinVisibility" />
         </div>
 
-        <!-- Error Message -->
         <div class="error-message">
             @errorMessage
         </div>
 
-        <!-- Unlock Button -->
         <MudButton Variant="Variant.Filled"
                    FullWidth="true"
                    Class="unlock-button"
@@ -53,7 +48,6 @@
             @buttonText
         </MudButton>
 
-        <!-- Failed Attempts (only show if has PIN and failed attempts > 0) -->
         @if (hasPin && failedAttempts > 0)
         {
             <div class="failed-attempts">
@@ -94,9 +88,17 @@
     {
         errorMessage = "";
 
-        if (pinInput.Length != 4 || !int.TryParse(pinInput, out int pin))
+        if (pinInput.Length != 4)
         {
-            errorMessage = "Incorrect PIN. Please try again.";
+            errorMessage = "PIN must be 4 digits.";
+            Snackbar.Add("PIN must be 4 digits.", Severity.Error);
+            return;
+        }
+
+        if (!int.TryParse(pinInput, out int pin))
+        {
+            errorMessage = "Non-numeric characters are not allowed.";
+            Snackbar.Add("Non-numeric characters are not allowed. PIN must be 4 digits.", Severity.Error);
             return;
         }
 
@@ -105,7 +107,8 @@
             await UserService.CreatePinAsync(pin);
             hasPin = true;
             Snackbar.Add("PIN created successfully! Welcome to Daily Journal.", Severity.Success);
-            Nav.NavigateTo("/new-entry", forceLoad: true);
+            await Task.Delay(500);
+            Nav.NavigateTo("/new-entry?fromLogin=true&isNewPin=true", forceLoad: true);
             return;
         }
 
@@ -114,7 +117,8 @@
         if (valid)
         {
             Snackbar.Add("Welcome back! Login successful.", Severity.Success);
-            Nav.NavigateTo("/new-entry", forceLoad: true);
+            await Task.Delay(500);
+            Nav.NavigateTo("/new-entry?fromLogin=true", forceLoad: true);
         }
         else
         {

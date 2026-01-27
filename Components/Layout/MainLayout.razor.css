@@ -19,10 +19,10 @@
 main {
     flex: 1;
     display: flex;
-  flex-direction: column;
+    flex-direction: column;
     height: 100vh;
     overflow: hidden;
-    background-color: var(--mud-palette-background);
+    background: linear-gradient(to bottom right, #FFFBEB 0%, #F5F5F4 100%);
 }
 
 .top-row {
