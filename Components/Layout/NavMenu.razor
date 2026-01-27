@@ -3,43 +3,44 @@
 
 <div class="nav-menu">
     <div class="nav-header">
-        <MudIcon Icon="@Icons.Material.Filled.Book" Style="margin-right: 8px;" />
+     <div class="nav-logo-icon">
+     <MudIcon Icon="@Icons.Material.Filled.AutoStories" />
+        </div>
         <span>Daily Journal</span>
     </div>
 
-    <MudButton Variant="Variant.Filled" 
-               Color="MudColor.Primary" 
-               FullWidth="true" 
-               StartIcon="@Icons.Material.Filled.Add"
-               OnClick="@(() => Nav.NavigateTo("/new-entry"))"
-               Style="margin: 16px 0; text-transform: none; justify-content: flex-start; padding-left: 16px;">
+    <MudButton Variant="Variant.Filled"
+     FullWidth="true"
+      StartIcon="@Icons.Material.Filled.Add"
+       OnClick="@(() => Nav.NavigateTo("/new-entry"))"
+    Class="new-entry-btn">
         New Entry
     </MudButton>
 
     <nav class="nav-links">
         <NavLink href="dashboard" class="nav-link-item">
-            <MudIcon Icon="@Icons.Material.Filled.Dashboard" Size="MudSize.Small" />
+  <MudIcon Icon="@Icons.Material.Outlined.GridView" />
             <span>Dashboard</span>
         </NavLink>
 
-        <NavLink href="timeline" class="nav-link-item">
-            <MudIcon Icon="@Icons.Material.Filled.Timeline" Size="MudSize.Small" />
-            <span>All Entries</span>
+   <NavLink href="timeline" class="nav-link-item">
+    <MudIcon Icon="@Icons.Material.Outlined.FormatListBulleted" />
+    <span>All Entries</span>
         </NavLink>
 
-        <NavLink href="calendar" class="nav-link-item">
-            <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Size="MudSize.Small" />
-            <span>Calendar</span>
+    <NavLink href="calendar" class="nav-link-item">
+ <MudIcon Icon="@Icons.Material.Outlined.CalendarToday" />
+   <span>Calendar</span>
         </NavLink>
 
-        <NavLink href="export" class="nav-link-item">
-            <MudIcon Icon="@Icons.Material.Filled.FileDownload" Size="MudSize.Small" />
+   <NavLink href="export" class="nav-link-item">
+ <MudIcon Icon="@Icons.Material.Outlined.FileDownload" />
             <span>Export</span>
         </NavLink>
 
-        <NavLink href="settings" class="nav-link-item">
-            <MudIcon Icon="@Icons.Material.Filled.Settings" Size="MudSize.Small" />
-            <span>Settings</span>
+ <NavLink href="settings" class="nav-link-item">
+            <MudIcon Icon="@Icons.Material.Outlined.Settings" />
+      <span>Settings</span>
         </NavLink>
     </nav>
 </div>

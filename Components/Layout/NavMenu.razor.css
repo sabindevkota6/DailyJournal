@@ -1,93 +1,110 @@
 .nav-menu {
     display: flex;
     flex-direction: column;
-    padding: 20px 16px;
+    padding: 24px 20px;
     height: 100%;
-    background-color: var(--mud-palette-surface);
-    transition: background-color 0.3s ease;
+    background-color: #FFFFFF;
+    border-right: 1px solid #F0EBE3;
 }
 
 .nav-header {
     display: flex;
     align-items: center;
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 20px;
-    color: var(--mud-palette-text-primary);
+    gap: 12px;
+    margin-top: 8px;
+    margin-bottom: 40px;
+    padding: 0 4px;
 }
 
-.nav-header ::deep .mud-icon-root {
-    color: var(--mud-palette-primary);
+.nav-logo-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #A0826D;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.nav-menu ::deep .mud-button-root {
-    background-color: #9b7b63 !important;
-    color: white !important;
-    border-radius: 6px;
-    padding: 12px 16px;
+.nav-logo-icon ::deep .mud-icon-root {
+    color: #FFFFFF;
+    font-size: 22px;
+}
+
+.nav-header span {
+    font-size: 1.19rem;
+    font-weight: 600;
+    color: #A0826D;
+}
+
+.nav-menu ::deep .new-entry-btn.mud-button-root {
+    background-color: #A0826D !important;
+    color: #FFFFFF !important;
+    border-radius: 8px;
+    padding: 12px 20px;
     margin-bottom: 24px;
     text-transform: none;
     font-size: 0.95rem;
     font-weight: 500;
-    box-shadow: 0 2px 4px rgba(155, 123, 99, 0.2);
-    transition: all 0.3s ease;
+    justify-content: center;
+    box-shadow: none;
 }
 
-.nav-menu ::deep .mud-button-root:hover {
-    background-color: #8b6b53 !important;
-    box-shadow: 0 3px 6px rgba(155, 123, 99, 0.3);
+.nav-menu ::deep .new-entry-btn.mud-button-root:hover {
+    background-color: #8B7058 !important;
 }
 
-.nav-menu ::deep .mud-button-root .mud-icon-root {
-    color: white;
+.nav-menu ::deep .new-entry-btn.mud-button-root .mud-icon-root {
+    color: #FFFFFF;
+    font-size: 20px;
 }
 
 .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 8px;
 }
 
-.nav-link-item {
+::deep a.nav-link-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    border-radius: 6px;
-    color: var(--mud-palette-text-secondary);
+    gap: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #666666;
     text-decoration: none;
-    transition: background-color 0.2s, color 0.2s;
-    font-size: 0.9rem;
-    font-weight: 400;
-}
-
-.nav-link-item ::deep .mud-icon-root {
-    color: var(--mud-palette-text-secondary);
-    font-size: 1.25rem;
-    transition: color 0.2s;
-}
-
-.nav-link-item:hover {
-    background-color: var(--mud-palette-action-default-hover);
-    color: var(--mud-palette-text-primary);
-}
-
-.nav-link-item:hover ::deep .mud-icon-root {
-    color: var(--mud-palette-text-primary);
-}
-
-.nav-link-item.active {
-    background-color: var(--mud-palette-primary);
-    color: white;
+    font-size: 0.95rem;
     font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.nav-link-item.active ::deep .mud-icon-root {
-    color: white;
+::deep a.nav-link-item .mud-icon-root {
+    color: #666666;
+    font-size: 22px;
+}
+
+::deep a.nav-link-item:hover {
+    background-color: #F5F0E8;
+    color: #555555;
+}
+
+::deep a.nav-link-item:hover .mud-icon-root {
+    color: #555555;
+}
+
+::deep a.nav-link-item.active {
+    background-color: #F5F0E8;
+    color: #555555;
+}
+
+::deep a.nav-link-item.active .mud-icon-root {
+    color: #555555;
 }
 
 @media (max-width: 768px) {
     .nav-menu {
-        padding: 16px 12px;
+        padding: 20px 16px;
     }
 }
