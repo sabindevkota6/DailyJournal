@@ -1,14 +1,23 @@
 .settings-container {
-  max-width: 900px;
-    margin: 0 auto;
-    padding: 24px;
+    max-width: 100%;
+    margin: 0;
+    padding: 24px 150px;
 }
 
 .settings-header {
     margin-bottom: 32px;
 }
 
-.settings-section {
+::deep .settings-title {
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+}
+
+::deep .settings-subtitle {
+    color: #9e9e9e !important;
+}
+
+::deep .settings-section {
     padding: 24px;
     margin-bottom: 24px;
     border-radius: 12px;
@@ -24,6 +33,10 @@
 
 .section-subtitle {
     margin-bottom: 20px;
+}
+
+::deep .section-subtitle {
+    color: #9e9e9e !important;
 }
 
 .theme-buttons {
@@ -51,13 +64,11 @@
 }
 
 .theme-mode-btn:hover {
-    border-color: var(--mud-palette-primary);
-  background: var(--mud-palette-action-default-hover);
+    border-color: #d0d0d0;
+    background: var(--mud-palette-action-default-hover);
 }
 
 .theme-mode-btn.active {
-    border-color: var(--mud-palette-primary);
-    background: var(--mud-palette-primary);
     color: white;
 }
 
@@ -69,40 +80,94 @@
     color: var(--mud-palette-text-primary);
 }
 
-.change-pin-button {
+.theme-mode-btn.light-mode.active {
+    border-color: #A0826D;
+    background: #A0826D;
+}
+
+.theme-mode-btn.light-mode.active:hover {
+    background: #8B7058;
+}
+
+.theme-mode-btn.dark-mode.active {
+    border-color: #ff9800;
+    background: #ff9800;
+}
+
+.theme-mode-btn.dark-mode.active:hover {
+    background: #f57c00;
+}
+
+::deep .change-pin-button {
     margin-top: 16px;
     height: 56px;
     border-radius: 8px;
     font-weight: 500;
+    background-color: #A0826D !important;
 }
 
-/* Change PIN Dialog Styles */
-.dialog-title {
+::deep .change-pin-button:hover {
+    background-color: #8B7058 !important;
+}
+
+.about-section {
+    margin-bottom: 24px;
+}
+
+.about-content {
     display: flex;
-    align-items: center;
- gap: 8px;
-}
-
-.change-pin-form {
-  padding: 8px 0;
-}
-
-.change-pin-form .mud-input-control {
-    margin-bottom: 16px;
-}
-
-.change-pin-form .mud-input-outlined {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.02);
     border-radius: 8px;
 }
 
-.change-pin-form .mud-input-helper-text {
-    font-size: 12px;
-    margin-top: 4px;
+.about-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    align-items: start;
+}
+
+::deep .about-label {
+    font-weight: 600 !important;
+    color: #000000 !important;
+}
+
+::deep .about-value {
+    color: #666666 !important;
+}
+
+::deep .logout-button {
+    height: 56px;
+    border-radius: 8px;
+    font-weight: 500;
+    background-color: #dc3545 !important;
+    color: #FFFFFF !important;
+}
+
+::deep .logout-button:hover {
+    background-color: #c82333 !important;
+}
+
+::deep .logout-button span,
+::deep .logout-button .mud-button-label {
+    color: #FFFFFF !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .settings-container {
+        padding: 24px 50px;
+    }
 }
 
 @media (max-width: 768px) {
     .settings-container {
- padding: 16px;
+        padding: 16px;
     }
 
     .theme-buttons {
