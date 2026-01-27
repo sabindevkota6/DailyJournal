@@ -1,0 +1,497 @@
+@page "/timeline"
+@inject DailyJournal.Core.Services.IJournalService JournalService
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@using MudBlazor
+@using DailyJournal.Data.Models
+
+<div class="timeline-container">
+    <div class="timeline-header">
+        <MudText Typo="Typo.h4" Class="timeline-title">Timeline</MudText>
+        <MudText Typo="Typo.body2" Class="timeline-subtitle">View, edit, and manage your journal entries</MudText>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="search-filter-bar">
+     <MudTextField @bind-Value="searchQuery" 
+     Placeholder="Search by title or content..." 
+      Variant="Variant.Outlined"
+ Adornment="Adornment.Start"
+        AdornmentIcon="@Icons.Material.Filled.Search"
+          Class="search-field"
+       Immediate="true"
+   DebounceInterval="300"
+    OnDebounceIntervalElapsed="OnSearchChanged" />
+   
+        <MudBadge Content="@GetActiveFilterCount()" Color="MudColor.Error" Overlap="true" Visible="@(GetActiveFilterCount() > 0)">
+ <MudButton Variant="Variant.Filled" 
+  Color="MudColor.Default"
+         StartIcon="@Icons.Material.Filled.FilterList"
+     OnClick="@(() => showFilters = !showFilters)"
+       Class="filter-button">
+    Filters
+            </MudButton>
+     </MudBadge>
+  </div>
+
+    <!-- Filter Panel -->
+ @if (showFilters)
+    {
+  <MudPaper Class="filter-panel" Elevation="1">
+  <div class="filter-header">
+     <MudText Typo="Typo.h6">Filters</MudText>
+    <MudButton Variant="Variant.Text" 
+  Color="MudColor.Primary" 
+   OnClick="ClearFilters"
+       Size="MudSize.Small">
+    Clear all
+ </MudButton>
+    </div>
+
+    <!-- Date Range -->
+  <div class="filter-section">
+    <MudText Typo="Typo.subtitle2" Class="filter-title">Date Range</MudText>
+     <div class="date-range-inputs">
+       <MudDatePicker @bind-Date="filterStartDate" 
+    Label="Start Date" 
+   Variant="Variant.Outlined"
+   DateFormat="MM/dd/yyyy"
+     Class="date-picker" />
+ <MudDatePicker @bind-Date="filterEndDate" 
+           Label="End Date" 
+  Variant="Variant.Outlined"
+     DateFormat="MM/dd/yyyy"
+ Class="date-picker" />
+     </div>
+    </div>
+
+       <!-- Moods Filter -->
+       <div class="filter-section">
+   <MudText Typo="Typo.subtitle2" Class="filter-title">Moods</MudText>
+      <div class="filter-chips">
+@foreach (var mood in AllMoods)
+    {
+ <MudChip T="string" 
+         Text="@mood.ToString()"
+    Color="@(selectedMoodFilters.Contains(mood) ? MudColor.Primary : MudColor.Default)"
+        Variant="@(selectedMoodFilters.Contains(mood) ? Variant.Filled : Variant.Outlined)"
+    OnClick="@(() => ToggleMoodFilter(mood))"
+Size="MudSize.Small">
+      @mood
+        </MudChip>
+ }
+      </div>
+    </div>
+
+<!-- Tags Filter -->
+    <div class="filter-section">
+    <MudText Typo="Typo.subtitle2" Class="filter-title">Tags</MudText>
+     <div class="filter-chips">
+          @foreach (var tag in AvailableTags)
+      {
+  <MudChip T="string" 
+ Text="@tag"
+          Color="@(selectedTagFilters.Contains(tag) ? MudColor.Primary : MudColor.Default)"
+Variant="@(selectedTagFilters.Contains(tag) ? Variant.Filled : Variant.Outlined)"
+           Icon="@Icons.Material.Filled.Tag"
+         OnClick="@(() => ToggleTagFilter(tag))"
+      Size="MudSize.Small">
+ @tag
+     </MudChip>
+    }
+        </div>
+    </div>
+
+          <!-- Apply Filters Button -->
+  <div class="filter-actions">
+     <MudButton Variant="Variant.Filled" 
+        Color="MudColor.Primary" 
+  OnClick="ApplyFilters"
+       FullWidth="true">
+ Apply Filters
+    </MudButton>
+  </div>
+      </MudPaper>
+    }
+
+  @if (isLoading)
+    {
+     <div class="loading-section">
+  <MudProgressCircular Color="MudColor.Primary" Indeterminate="true" />
+    <MudText Typo="Typo.body1" Class="mt-3">Loading entries...</MudText>
+   </div>
+    }
+    else if (!entries.Any())
+{
+<MudPaper Class="pa-6 text-center empty-state">
+ <MudIcon Icon="@Icons.Material.Filled.EventNote" Size="MudSize.Large" Class="empty-state-icon" />
+   <MudText Typo="Typo.h6" Class="mt-3">No Entries Yet</MudText>
+ <MudText Typo="Typo.body2" Class="empty-state-subtitle">Start journaling by creating your first entry!</MudText>
+   <MudButton Variant="Variant.Filled" Color="MudColor.Primary" OnClick="@(() => Nav.NavigateTo("/new-entry"))" Class="mt-4 empty-state-button">
+     Create Entry
+ </MudButton>
+        </MudPaper>
+  }
+ else
+    {
+   <div class="timeline-entries">
+  @foreach (var entry in entries)
+  {
+    <MudCard Class="timeline-card">
+ <MudCardHeader>
+     <CardHeaderContent>
+    <div class="entry-header">
+ <div>
+       <MudText Typo="Typo.h6">@entry.Title</MudText>
+<div class="entry-metadata">
+          <span class="metadata-text">@entry.Date.ToString("MMMM dd, yyyy")</span>
+<span class="metadata-separator">|</span>
+    <span class="metadata-text">@entry.CreatedAt.ToString("g")</span>
+   <MudIcon Icon="@Icons.Material.Filled.AccessTime" Size="MudSize.Small" Class="metadata-icon" />
+       </div>
+ </div>
+  </div>
+  </CardHeaderContent>
+   <CardHeaderActions>
+    <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+   Color="MudColor.Default"
+     Size="MudSize.Small"
+  Class="edit-icon-button"
+  OnClick="@(() => EditEntry(entry))" />
+   <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+ Color="MudColor.Default"
+Size="MudSize.Small"
+   Class="delete-icon-button"
+   OnClick="@(() => DeleteEntry(entry))" />
+    </CardHeaderActions>
+   </MudCardHeader>
+        <MudCardContent>
+<div class="entry-content-preview">
+@((MarkupString)GetContentPreview(entry.Content))
+    </div>
+    </MudCardContent>
+ <MudCardActions Class="card-actions-footer">
+   <div class="mood-tag-section">
+     @if (entry.Tags.Any())
+     {
+       <div class="tags-section">
+         <span class="tags-label-inline">Tags:</span>
+     @foreach (var tag in entry.Tags)
+{
+           <span class="tag-chip-styled">@tag</span>
+   }
+ </div>
+     }
+ <div class="mood-button-row">
+       <div class="mood-section">
+         <span class="mood-label">Primary Mood:</span>
+   <span class="mood-chip @GetMoodCategoryClass(entry.Category ?? Category.Neutral)">@((entry.Category ?? Category.Neutral).ToString())</span>
+   <span class="mood-separator">|</span>
+   <span class="mood-label">Secondary Mood:</span>
+   <span class="mood-chip mood-chip-neutral">@entry.PrimaryMood</span>
+   @foreach (var mood in entry.SecondaryMoods)
+ {
+       <span class="mood-chip mood-chip-neutral">@mood</span>
+      }
+       </div>
+       <MudButton Variant="Variant.Filled" Class="view-entry-button" OnClick="@(() => ViewEntry(entry))">View Full Entry</MudButton>
+     </div>
+   </div>
+ </MudCardActions>
+      </MudCard>
+}
+  </div>
+  }
+</div>
+
+@code {
+    private List<JournalEntry> entries = new();
+    private List<JournalEntry> allEntries = new();
+    private bool isLoading = true;
+    private bool showFilters = false;
+
+    private string searchQuery = "";
+
+    private DateTime? filterStartDate;
+    private DateTime? filterEndDate;
+
+    private HashSet<Mood> selectedMoodFilters = new();
+    private readonly Mood[] AllMoods = Enum.GetValues<Mood>();
+
+    private HashSet<string> selectedTagFilters = new();
+    private List<string> AvailableTags = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+   await LoadEntries();
+            LoadAvailableTags();
+        }
+    catch (Exception ex)
+     {
+     System.Diagnostics.Debug.WriteLine($"Error initializing Timeline: {ex.Message}");
+       Snackbar.Add("Error initializing page", Severity.Error);
+        }
+    }
+
+    private async Task LoadEntries()
+    {
+        try
+        {
+          isLoading = true;
+ allEntries = await JournalService.SearchAsync();
+entries = allEntries;
+            System.Diagnostics.Debug.WriteLine($"Loaded {entries.Count} entries");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading entries: {ex.Message}", Severity.Error);
+            System.Diagnostics.Debug.WriteLine($"Error loading entries: {ex}");
+        }
+        finally
+   {
+            isLoading = false;
+        }
+    }
+
+    private void LoadAvailableTags()
+  {
+        try
+        {
+            AvailableTags = allEntries
+        .SelectMany(e => e.Tags)
+            .Distinct()
+           .OrderBy(t => t)
+           .ToList();
+        System.Diagnostics.Debug.WriteLine($"Loaded {AvailableTags.Count} unique tags");
+        }
+        catch (Exception ex)
+        {
+       System.Diagnostics.Debug.WriteLine($"Error loading tags: {ex.Message}");
+        }
+    }
+
+    private int GetActiveFilterCount()
+    {
+        try
+        {
+        int count = 0;
+ if (filterStartDate.HasValue) count++;
+       if (filterEndDate.HasValue) count++;
+        count += selectedMoodFilters.Count;
+            count += selectedTagFilters.Count;
+          return count;
+  }
+        catch (Exception ex)
+  {
+    System.Diagnostics.Debug.WriteLine($"Error counting filters: {ex.Message}");
+         return 0;
+        }
+    }
+
+    private void ToggleMoodFilter(Mood mood)
+    {
+        try
+        {
+   if (selectedMoodFilters.Contains(mood))
+            {
+       selectedMoodFilters.Remove(mood);
+            }
+      else
+            {
+        selectedMoodFilters.Add(mood);
+     }
+    }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error toggling mood filter: {ex.Message}");
+        }
+    }
+
+    private void ToggleTagFilter(string tag)
+    {
+    try
+  {
+            if (selectedTagFilters.Contains(tag))
+        {
+   selectedTagFilters.Remove(tag);
+    }
+            else
+     {
+          selectedTagFilters.Add(tag);
+       }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error toggling tag filter: {ex.Message}");
+    }
+    }
+
+    private async Task OnSearchChanged()
+    {
+        try
+    {
+            await ApplyFilters();
+        }
+        catch (Exception ex)
+        {
+  System.Diagnostics.Debug.WriteLine($"Error in search changed: {ex.Message}");
+  Snackbar.Add("Error searching entries", Severity.Warning);
+        }
+    }
+
+    private async Task ApplyFilters()
+    {
+        try
+    {
+ isLoading = true;
+
+        entries = await JournalService.SearchAsync(
+   query: string.IsNullOrWhiteSpace(searchQuery) ? null : searchQuery,
+                start: filterStartDate,
+  end: filterEndDate,
+      moods: selectedMoodFilters.Any() ? selectedMoodFilters : null,
+   tags: selectedTagFilters.Any() ? selectedTagFilters : null
+    );
+
+  System.Diagnostics.Debug.WriteLine($"Filters applied. Found {entries.Count} entries");
+        }
+   catch (Exception ex)
+    {
+            Snackbar.Add($"Error applying filters: {ex.Message}", Severity.Error);
+  System.Diagnostics.Debug.WriteLine($"Error applying filters: {ex}");
+        }
+     finally
+   {
+    isLoading = false;
+        }
+    }
+
+    private async Task ClearFilters()
+    {
+  try
+      {
+            searchQuery = "";
+        filterStartDate = null;
+            filterEndDate = null;
+    selectedMoodFilters.Clear();
+            selectedTagFilters.Clear();
+            entries = allEntries;
+       await InvokeAsync(StateHasChanged);
+      System.Diagnostics.Debug.WriteLine("Filters cleared");
+        }
+    catch (Exception ex)
+      {
+    System.Diagnostics.Debug.WriteLine($"Error clearing filters: {ex.Message}");
+            Snackbar.Add("Error clearing filters", Severity.Warning);
+        }
+  }
+
+    private MudColor GetMoodColor(Category category) => category switch
+    {
+        Category.Positive => MudColor.Success,
+        Category.Negative => MudColor.Error,
+     _ => MudColor.Default
+    };
+
+    private string GetMoodCategoryClass(Category category) => category switch
+    {
+     Category.Positive => "mood-chip-positive",
+        Category.Negative => "mood-chip-negative",
+      _ => "mood-chip-neutral"
+    };
+
+    private string GetContentPreview(string content)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(content))
+  {
+       return "<em>No content</em>";
+    }
+
+       var text = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
+ var preview = text.Length > 200 ? text.Substring(0, 200) + "..." : text;
+  return System.Net.WebUtility.HtmlEncode(preview);
+        }
+        catch (Exception ex)
+        {
+  System.Diagnostics.Debug.WriteLine($"Error getting content preview: {ex.Message}");
+       return "<em>Preview unavailable</em>";
+ }
+    }
+
+    private void ViewEntry(JournalEntry entry)
+    {
+        try
+        {
+   if (entry?.Id != null)
+   {
+          Nav.NavigateTo($"/entry-view/{entry.Id}");
+      }
+        }
+        catch (Exception ex)
+        {
+       System.Diagnostics.Debug.WriteLine($"Error viewing entry: {ex.Message}");
+            Snackbar.Add("Error opening entry", Severity.Error);
+        }
+    }
+
+  private void EditEntry(JournalEntry entry)
+    {
+  try
+  {
+            if (entry?.Id != null)
+            {
+        Nav.NavigateTo($"/entry-edit/{entry.Id}");
+            }
+}
+        catch (Exception ex)
+   {
+            System.Diagnostics.Debug.WriteLine($"Error editing entry: {ex.Message}");
+         Snackbar.Add("Error opening editor", Severity.Error);
+     }
+    }
+
+    private async Task DeleteEntry(JournalEntry entry)
+    {
+     try
+        {
+ var result = await DialogService.ShowMessageBox(
+          "Delete Entry",
+          $"Are you sure you want to delete the entry from {entry.Date:MMMM dd, yyyy}? This action cannot be undone.",
+        yesText: "Delete",
+           cancelText: "Cancel");
+
+            if (result == true)
+      {
+     try
+    {
+   var deleted = await JournalService.DeleteEntryByIdAsync(entry.Id);
+         if (deleted)
+            {
+   Snackbar.Add("Entry deleted successfully", Severity.Success);
+            await LoadEntries();
+       LoadAvailableTags();
+ }
+           else
+  {
+          Snackbar.Add("Entry not found", Severity.Warning);
+  }
+     }
+        catch (Exception deleteEx)
+   {
+         Snackbar.Add($"Error deleting entry: {deleteEx.Message}", Severity.Error);
+     System.Diagnostics.Debug.WriteLine($"Error deleting entry: {deleteEx}");
+      }
+        }
+        }
+        catch (Exception ex)
+        {
+       System.Diagnostics.Debug.WriteLine($"Error showing delete dialog: {ex.Message}");
+            Snackbar.Add("Error showing delete confirmation", Severity.Error);
+        }
+    }
+}
