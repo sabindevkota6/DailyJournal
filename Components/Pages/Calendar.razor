@@ -9,8 +9,8 @@
 
 <div class="calendar-container">
     <div class="calendar-header">
- <MudText Typo="Typo.h4">Calendar</MudText>
-    <MudText Typo="Typo.body2" Color="MudColor.Secondary">View your journal entries by date</MudText>
+ <MudText Typo="Typo.h4" Class="calendar-title">Calendar</MudText>
+    <MudText Typo="Typo.body2" Class="calendar-subtitle">View your journal entries by date</MudText>
     </div>
 
     @if (isLoading)
@@ -67,6 +67,12 @@ OnClick="NextMonth"
    <MudIcon Icon="@GetMoodIcon(entry.PrimaryMood)" Size="MudSize.Medium" Color="@GetMoodIconColor(entry.PrimaryMood)" />
     </div>
       }
+                else if (day.Month == currentMonth.Month && day.Date <= DateTime.Now.Date)
+       {
+           <div class="day-emoji" title="No Entry">
+   <MudIcon Icon="@Icons.Material.Filled.Close" Size="MudSize.Medium" Color="MudColor.Default" />
+     </div>
+        }
   </div>
   }
     </div>
@@ -99,65 +105,48 @@ OnClick="NextMonth"
      @if (selectedDate.HasValue)
       {
    <MudPaper Class="selected-day-section" Elevation="1">
-            <div class="section-header">
-       <MudText Typo="Typo.h6">@selectedDate.Value.ToString("MMMM dd, yyyy")</MudText>
-   @if (entriesByDate.ContainsKey(selectedDate.Value))
-       {
-  <MudButton Variant="Variant.Outlined" 
-    Color="MudColor.Primary" 
-    Size="MudSize.Small"
-    StartIcon="@Icons.Material.Filled.Visibility"
-    OnClick="@(() => ViewEntry(entriesByDate[selectedDate.Value]))">
-View Entry
-    </MudButton>
-       }
-  else
-  {
-<MudButton Variant="Variant.Filled" 
-               Color="MudColor.Primary" 
-     Size="MudSize.Small"
-  StartIcon="@Icons.Material.Filled.Add"
-   OnClick="@(() => Nav.NavigateTo("/new-entry"))">
-     Create Entry
-       </MudButton>
-   }
-      </div>
-
-        @if (entriesByDate.ContainsKey(selectedDate.Value))
+ @if (entriesByDate.ContainsKey(selectedDate.Value))
      {
  var entry = entriesByDate[selectedDate.Value];
-    <div class="entry-preview">
+         var moodCategory = GetMoodCategory(entry.PrimaryMood);
+<div class="entry-preview">
+             <div class="entry-header-row">
  <MudText Typo="Typo.h6" Class="entry-title">@entry.Title</MudText>
-     <div class="entry-meta">
-<MudChip T="string" Size="MudSize.Small" Color="@GetMoodChipColor(entry.PrimaryMood)">
-  @entry.PrimaryMood
-     </MudChip>
-    @if (entry.Category.HasValue)
-           {
- <MudChip T="string" Size="MudSize.Small" Variant="Variant.Outlined">
-     @entry.Category.Value
-         </MudChip>
-      }
-        </div>
+  <MudButton Variant="Variant.Outlined" 
+    Class="view-entry-button" 
+    Size="MudSize.Small"
+  StartIcon="@Icons.Material.Filled.Visibility"
+    OnClick="@(() => ViewEntry(entry))">
+View Entry
+    </MudButton>
+            </div>
+  <MudText Typo="Typo.caption" Class="entry-date">@selectedDate.Value.ToString("MMMM dd, yyyy")</MudText>
+<div class="entry-meta-row">
+    <span class="meta-label">Mood:</span>
+         <span class="mood-chip @GetMoodCategoryClass(moodCategory)">@moodCategory</span>
+   </div>
    @if (entry.Tags.Any())
  {
-<div class="entry-tags">
-      @foreach (var tag in entry.Tags.Take(5))
-    {
-      <MudChip T="string" Size="MudSize.Small" Variant="Variant.Text">@tag</MudChip>
+        <div class="entry-meta-row">
+  <span class="meta-label">Tags:</span>
+    <span class="tags-inline">
+@foreach (var tag in entry.Tags)
+   {
+          <span class="tag-chip-inline">@tag</span>
     }
-         </div>
-   }
+ </span>
+           </div>
+    }
     </div>
 }
     else
-       {
-   <MudText Typo="Typo.body2" Color="MudColor.Secondary">
-      No entry for this day. Click "Create Entry" to add one.
+     {
+   <MudText Typo="Typo.body2" Class="no-entry-text">
+  No entry for this day.
    </MudText>
   }
       </MudPaper>
-        }
+     }
     }
 </div>
 
@@ -264,11 +253,41 @@ View Entry
 
     private MudColor GetMoodChipColor(Mood mood)
     {
-        return mood switch
+      return mood switch
      {
       Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Calm or Mood.Confident => MudColor.Success,
             Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => MudColor.Error,
-            _ => MudColor.Default
+      _ => MudColor.Default
+        };
+    }
+
+    private string GetMoodTextClass(Mood mood)
+    {
+        return mood switch
+ {
+          Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "mood-positive",
+         Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "mood-negative",
+     _ => "mood-neutral"
+        };
+    }
+
+    private string GetMoodCategory(Mood mood)
+    {
+        return mood switch
+        {
+         Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "Positive",
+            Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "Negative",
+      _ => "Neutral"
+      };
+    }
+
+    private string GetMoodCategoryClass(string category)
+    {
+        return category.ToLower() switch
+        {
+          "positive" => "mood-chip-positive",
+            "negative" => "mood-chip-negative",
+ _ => "mood-chip-neutral"
         };
     }
 
