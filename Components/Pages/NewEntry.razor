@@ -209,28 +209,29 @@ var uri = new Uri(Nav.Uri);
 
   private void ToggleMood(Mood mood)
     {
-      try
-        {
-          if (selectedMoods.Contains(mood))
-    {
-        selectedMoods.Remove(mood);
-            }
-            else if (selectedMoods.Count < 2)
-            {
-        selectedMoods.Add(mood);
-       }
-      else
+        try
+  {
+        if (selectedMoods.Contains(mood))
    {
-       selectedMoods.RemoveAt(0);
-       selectedMoods.Add(mood);
+      selectedMoods.Remove(mood);
             }
+     else if (selectedMoods.Count < 2)
+         {
+    selectedMoods.Add(mood);
+       }
+            else
+    {
+    Snackbar.Add("You can select up to 2 specific moods. The oldest selection was replaced.", Severity.Info);
+          selectedMoods.RemoveAt(0);
+         selectedMoods.Add(mood);
+            }
+  }
+       catch (Exception ex)
+   {
+      System.Diagnostics.Debug.WriteLine($"Error toggling mood: {ex.Message}");
+        Snackbar.Add("Error updating mood selection", Severity.Warning);
         }
-        catch (Exception ex)
-        {
-         System.Diagnostics.Debug.WriteLine($"Error toggling mood: {ex.Message}");
-         Snackbar.Add("Error updating mood selection", Severity.Warning);
-        }
- }
+    }
 
     private void ToggleTag(string tag)
     {
@@ -358,4 +359,4 @@ var uri = new Uri(Nav.Uri);
     System.Diagnostics.Debug.WriteLine($"Error disposing editor: {ex.Message}");
         }
     }
-}}
+}

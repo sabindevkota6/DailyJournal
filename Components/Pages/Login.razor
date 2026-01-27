@@ -74,11 +74,34 @@
         try
         {
             hasPin = await UserService.HasPinAsync();
+            CheckForLogoutSuccess();
         }
         catch (Exception ex)
         {
             errorMessage = "Error loading PIN system";
             System.Diagnostics.Debug.WriteLine(ex);
+        }
+    }
+
+    private void CheckForLogoutSuccess()
+    {
+        try
+        {
+            var uri = new Uri(Nav.Uri);
+            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            var loggedOut = query["loggedOut"];
+
+            if (loggedOut == "true")
+            {
+                Snackbar.Add("Logged out successfully", Severity.Success);
+                System.Diagnostics.Debug.WriteLine("Showing logout success message on Login page");
+
+                Nav.NavigateTo("/login", replace: true);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error checking logout parameter: {ex.Message}");
         }
     }
 
