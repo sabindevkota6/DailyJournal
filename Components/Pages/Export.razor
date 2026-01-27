@@ -1,0 +1,340 @@
+@page "/export"
+@inject DailyJournal.Core.Services.IPdfService PdfService
+@inject ISnackbar Snackbar
+@inject NavigationManager Nav
+@using MudBlazor
+@using DailyJournal.Core.Services
+
+<PageTitle>Export - Daily Journal</PageTitle>
+
+<div class="export-container">
+    <div class="export-header">
+        <MudText Typo="Typo.h4" Class="export-title">Export to PDF</MudText>
+    <MudText Typo="Typo.body2" Class="export-subtitle">Export entries to PDF by date range</MudText>
+    </div>
+
+    <MudPaper Class="export-section" Elevation="1">
+        <div class="section-header">
+            <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Size="MudSize.Small" />
+            <MudText Typo="Typo.h6">Select Date Range</MudText>
+        </div>
+
+        <div class="date-range-container">
+     <MudDatePicker Label="Start Date"
+   @bind-Date="startDate"
+      MaxDate="DateTime.Now.Date"
+      Variant="Variant.Outlined"
+          Color="MudColor.Primary"
+       Class="date-picker" />
+
+        <MudDatePicker Label="End Date"
+       @bind-Date="endDate"
+              MaxDate="DateTime.Now.Date"
+           Variant="Variant.Outlined"
+          Color="MudColor.Primary"
+   Class="date-picker" />
+        </div>
+
+     <div class="quick-select-buttons">
+        <div class="quick-select-label">
+            <MudIcon Icon="@Icons.Material.Filled.CalendarMonth" Size="MudSize.Small" />
+  <MudText Typo="Typo.body2">Quick Select:</MudText>
+        </div>
+        <div class="button-group">
+       <MudButton Variant="Variant.Outlined" 
+  Size="MudSize.Small" 
+                OnClick="SetLastWeek"
+      StartIcon="@Icons.Material.Filled.DateRange">
+       Last Week
+         </MudButton>
+      <MudButton Variant="Variant.Outlined" 
+   Size="MudSize.Small" 
+       OnClick="SetLastMonth"
+     StartIcon="@Icons.Material.Filled.DateRange">
+                Last Month
+     </MudButton>
+            <MudButton Variant="Variant.Outlined" 
+              Size="MudSize.Small" 
+         OnClick="SetLastThreeMonths"
+  StartIcon="@Icons.Material.Filled.DateRange">
+      Last 3 Months
+</MudButton>
+    <MudButton Variant="Variant.Outlined" 
+        Size="MudSize.Small" 
+        OnClick="SetLastYear"
+       StartIcon="@Icons.Material.Filled.DateRange">
+           Last Year
+        </MudButton>
+          <MudButton Variant="Variant.Outlined" 
+  Size="MudSize.Small" 
+        OnClick="SetAllTime"
+        StartIcon="@Icons.Material.Filled.AllInclusive">
+    All Time
+            </MudButton>
+ </div>
+    </div>
+
+        @if (startDate.HasValue && endDate.HasValue)
+    {
+ <MudAlert Severity="Severity.Info" Class="date-info">
+ You are exporting entries from <strong>@startDate.Value.ToString("MMM dd, yyyy")</strong> to <strong>@endDate.Value.ToString("MMM dd, yyyy")</strong>
+      <br />
+          <small>(@((endDate.Value - startDate.Value).Days + 1) days)</small>
+       </MudAlert>
+        }
+
+    <MudButton Variant="Variant.Filled"
+             Color="MudColor.Primary"
+ FullWidth="true"
+Size="MudSize.Large"
+           StartIcon="@Icons.Material.Filled.Download"
+ OnClick="ExportToPdf"
+              Disabled="@(!CanExport || isExporting)"
+ Class="export-button">
+    @if (isExporting)
+     {
+     <MudProgressCircular Size="MudSize.Small" Indeterminate="true" Class="mr-2" />
+ <span>Generating PDF...</span>
+        }
+ else
+     {
+         <span>Export to PDF</span>
+ }
+        </MudButton>
+  </MudPaper>
+
+    <MudPaper Class="export-section" Elevation="1">
+        <div class="section-header">
+            <MudIcon Icon="@Icons.Material.Filled.Info" Size="MudSize.Small" />
+<MudText Typo="Typo.h6">Export Information</MudText>
+      </div>
+
+      <div class="info-list">
+   <div class="info-item">
+          <MudIcon Icon="@Icons.Material.Filled.Check" Color="MudColor.Success" Size="MudSize.Small" />
+    <MudText Typo="Typo.body2">All journal entries in the selected date range</MudText>
+</div>
+<div class="info-item">
+ <MudIcon Icon="@Icons.Material.Filled.Check" Color="MudColor.Success" Size="MudSize.Small" />
+      <MudText Typo="Typo.body2">Includes title, content, mood, category, and tags</MudText>
+     </div>
+        <div class="info-item">
+    <MudIcon Icon="@Icons.Material.Filled.Check" Color="MudColor.Success" Size="MudSize.Small" />
+     <MudText Typo="Typo.body2">Professionally formatted PDF document</MudText>
+</div>
+     <div class="info-item">
+   <MudIcon Icon="@Icons.Material.Filled.Check" Color="MudColor.Success" Size="MudSize.Small" />
+       <MudText Typo="Typo.body2">Ready for printing or archival</MudText>
+     </div>
+  </div>
+    </MudPaper>
+
+    @if (!string.IsNullOrEmpty(exportErrorMessage))
+    {
+   <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="@(() => exportErrorMessage = null)">
+ <strong>Error Details:</strong><br />
+            @exportErrorMessage
+      </MudAlert>
+}
+</div>
+
+@code {
+    private DateTime? startDate = DateTime.Now.Date.AddMonths(-1); // Use local time
+    private DateTime? endDate = DateTime.Now.Date; // Use local time
+  private bool isExporting = false;
+    private string? exportErrorMessage = null;
+
+    private bool CanExport => startDate.HasValue && endDate.HasValue && startDate.Value <= endDate.Value;
+
+  protected override void OnInitialized()
+    {
+  try
+      {
+   System.Diagnostics.Debug.WriteLine("=== Export page initialized ===");
+     System.Diagnostics.Debug.WriteLine($"Start date: {startDate}, End date: {endDate}");
+     System.Diagnostics.Debug.WriteLine($"Local time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+      base.OnInitialized();
+    }
+        catch (Exception ex)
+      {
+ System.Diagnostics.Debug.WriteLine($"Export page initialization error: {ex}");
+      exportErrorMessage = $"Initialization Error: {ex.Message}";
+        }
+    }
+
+    private void SetLastWeek()
+    {
+  try
+        {
+        var today = DateTime.Now.Date;
+    endDate = today;
+   startDate = today.AddDays(-7);
+     }
+     catch (Exception ex)
+    {
+            System.Diagnostics.Debug.WriteLine($"Error setting last week: {ex.Message}");
+       Snackbar.Add("Error setting date range", Severity.Warning);
+  }
+ }
+
+    private void SetLastMonth()
+    {
+  try
+        {
+            var today = DateTime.Now.Date;
+ endDate = today;
+startDate = today.AddMonths(-1);
+  }
+        catch (Exception ex)
+        {
+   System.Diagnostics.Debug.WriteLine($"Error setting last month: {ex.Message}");
+   Snackbar.Add("Error setting date range", Severity.Warning);
+        }
+    }
+
+ private void SetLastThreeMonths()
+    {
+        try
+        {
+  var today = DateTime.Now.Date;
+            endDate = today;
+   startDate = today.AddMonths(-3);
+        }
+    catch (Exception ex)
+     {
+   System.Diagnostics.Debug.WriteLine($"Error setting last three months: {ex.Message}");
+ Snackbar.Add("Error setting date range", Severity.Warning);
+  }
+ }
+
+    private void SetLastYear()
+    {
+        try
+     {
+     var today = DateTime.Now.Date;
+  endDate = today;
+ startDate = today.AddYears(-1);
+   }
+        catch (Exception ex)
+   {
+       System.Diagnostics.Debug.WriteLine($"Error setting last year: {ex.Message}");
+ Snackbar.Add("Error setting date range", Severity.Warning);
+        }
+    }
+
+    private void SetAllTime()
+    {
+        try
+  {
+   var today = DateTime.Now.Date;
+      endDate = today;
+startDate = today.AddYears(-10);
+        }
+   catch (Exception ex)
+        {
+   System.Diagnostics.Debug.WriteLine($"Error setting all time: {ex.Message}");
+   Snackbar.Add("Error setting date range", Severity.Warning);
+  }
+    }
+
+    private async Task ExportToPdf()
+    {
+      if (!CanExport)
+        {
+     Snackbar.Add("Please select valid start and end dates", Severity.Warning);
+            return;
+        }
+
+        try
+     {
+            System.Diagnostics.Debug.WriteLine($"Starting PDF export from {startDate} to {endDate}");
+       isExporting = true;
+        exportErrorMessage = null;
+    StateHasChanged();
+
+         System.Diagnostics.Debug.WriteLine("Calling PdfService.ExportJournalsAsync...");
+            var result = await PdfService.ExportJournalsAsync(startDate!.Value, endDate!.Value);
+            System.Diagnostics.Debug.WriteLine($"PDF generated: {result.FileName}, Size: {result.Bytes.Length} bytes");
+
+ System.Diagnostics.Debug.WriteLine("Saving PDF file...");
+         await SavePdfFile(result);
+
+      Snackbar.Add("PDF exported successfully!", Severity.Success);
+            System.Diagnostics.Debug.WriteLine("Export completed successfully");
+        }
+     catch (Exception ex)
+        {
+          exportErrorMessage = $"Export Error: {ex.GetType().Name}\n\nMessage: {ex.Message}\n\nStack Trace:\n{ex.StackTrace}";
+       
+            if (ex.InnerException != null)
+            {
+  exportErrorMessage += $"\n\nInner Exception: {ex.InnerException.Message}\n{ex.InnerException.StackTrace}";
+       }
+
+        Snackbar.Add($"Export failed: {ex.Message}", Severity.Error);
+            System.Diagnostics.Debug.WriteLine($"Export error: {ex}");
+        }
+        finally
+        {
+  isExporting = false;
+         StateHasChanged();
+        }
+    }
+
+    private async Task SavePdfFile(PdfExportResult result)
+    {
+        try
+        {
+   System.Diagnostics.Debug.WriteLine("Getting Downloads folder...");
+var downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            System.Diagnostics.Debug.WriteLine($"Downloads path: {downloadsPath}");
+
+         if (!Directory.Exists(downloadsPath))
+            {
+         System.Diagnostics.Debug.WriteLine("Creating Downloads directory...");
+    Directory.CreateDirectory(downloadsPath);
+   }
+
+            var filePath = Path.Combine(downloadsPath, result.FileName);
+        System.Diagnostics.Debug.WriteLine($"Full file path: {filePath}");
+
+         System.Diagnostics.Debug.WriteLine("Writing PDF bytes to file...");
+   await File.WriteAllBytesAsync(filePath, result.Bytes);
+            System.Diagnostics.Debug.WriteLine("File written successfully");
+
+            Snackbar.Add($"PDF saved to: {filePath}", Severity.Success, config =>
+ {
+     config.VisibleStateDuration = 5000;
+        });
+
+            System.Diagnostics.Debug.WriteLine("Opening file...");
+  await OpenFile(filePath);
+      }
+        catch (Exception ex)
+  {
+            System.Diagnostics.Debug.WriteLine($"Save PDF error: {ex}");
+   throw new Exception($"Failed to save PDF file: {ex.Message}", ex);
+    }
+  }
+
+  private async Task OpenFile(string filePath)
+    {
+        try
+  {
+    System.Diagnostics.Debug.WriteLine($"Attempting to open file: {filePath}");
+    var psi = new System.Diagnostics.ProcessStartInfo
+            {
+   FileName = filePath,
+                UseShellExecute = true
+         };
+  System.Diagnostics.Process.Start(psi);
+            System.Diagnostics.Debug.WriteLine("File opened successfully");
+      await Task.CompletedTask;
+   }
+        catch (Exception ex)
+   {
+       System.Diagnostics.Debug.WriteLine($"Open file error: {ex}");
+           
+     }
+    }
+}

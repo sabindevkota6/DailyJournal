@@ -1,0 +1,181 @@
+.export-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 24px 150px;
+}
+
+.export-header {
+    margin-bottom: 32px;
+}
+
+::deep .export-title {
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+}
+
+::deep .export-subtitle {
+    color: #9e9e9e !important;
+}
+
+::deep .export-section {
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    background: var(--mud-palette-surface);
+}
+
+
+::deep .export-section .mud-popover .mud-icon-root,
+::deep .export-section .mud-picker .mud-icon-root,
+::deep .export-section .mud-picker .mud-button-root .mud-icon-root {
+    color: #A0826D !important;
+    fill: #A0826D !important;
+}
+
+::deep .export-section .mud-picker .mud-picker-title,
+::deep .export-section .mud-picker .mud-picker-year,
+::deep .export-section .mud-picker .mud-picker-month {
+    color: #FFFFFF !important;
+}
+
+::deep .export-section .mud-picker-day.mud-selected .mud-button-root .mud-typography,
+::deep .export-section .mud-calendar .mud-day.mud-selected .mud-typography {
+    color: #FFFFFF !important;
+}
+
+::deep .export-section .mud-input-adornment .mud-icon-root,
+::deep .export-section .mud-input-adornment-end .mud-icon-root {
+    color: #A0826D !important;
+    fill: #A0826D !important;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+::deep .section-header .mud-typography {
+    color: #000000 !important;
+}
+
+.date-range-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+::deep .date-picker {
+    width: 100%;
+}
+
+.quick-select-buttons {
+    margin-bottom: 24px;
+}
+
+.quick-select-label {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.quick-select-label .mud-icon-root {
+    color: #000000 !important;
+}
+
+::deep .quick-select-label .mud-typography {
+    color: #000000 !important;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+::deep .date-info {
+    margin-bottom: 24px;
+    background-color: #F5F0E8 !important;
+}
+
+::deep .date-info .mud-alert-message {
+    color: #6e6d6d !important;
+}
+
+::deep .date-info .mud-alert-message strong {
+    color: #6e6d6d !important;
+    font-weight: 600 !important;
+}
+
+::deep .date-info .mud-alert-message small {
+    color: #6e6d6d !important;
+}
+
+::deep .date-info svg,
+::deep .date-info .mud-icon-root,
+::deep .date-info .mud-svg-icon {
+    color: #6e6d6d !important;
+    fill: #6e6d6d !important;
+}
+
+::deep .export-button {
+    height: 56px;
+    border-radius: 8px;
+    font-weight: 500;
+    background-color: #A0826D !important;
+}
+
+::deep .export-button:hover {
+    background-color: #8B7058 !important;
+}
+
+::deep .export-button .mud-progress-circular {
+    margin-right: 8px;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+}
+
+::deep .info-item .mud-icon-root {
+    color: #A0826D !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .export-container {
+        padding: 24px 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .export-container {
+        padding: 16px;
+    }
+
+    .date-range-container {
+        grid-template-columns: 1fr;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group button {
+        width: 100%;
+    }
+}
