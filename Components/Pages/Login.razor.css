@@ -4,32 +4,60 @@
     left: 0;
     width: 100%;
     height: 100%;
-  display: flex;
-    justify-content: center;
+    display: flex;
+  justify-content: center;
     align-items: center;
- padding: 20px;
+    padding: 20px;
     box-sizing: border-box;
+}
+
+.login-container.light-mode {
     background: linear-gradient(to bottom right, #FFFBEB 0%, #F5F5F4 100%);
 }
 
+.login-container.dark-mode {
+    background: #121212;
+}
+
 .login-card {
-    position: relative;
+  position: relative;
     width: 450px;
     max-width: 90%;
     padding: 48px 40px 56px;
-    border-radius: 16px;
+ border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    background-color: #FFFFFF;
+    background-color: var(--mud-palette-surface);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--mud-palette-divider);
+}
+
+.dark-mode .login-card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .lock-icon-wrapper {
     display: flex;
     justify-content: center;
     margin-bottom: 24px;
+}
+
+.light-mode .lock-icon-circle {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.light-mode .lock-icon-circle ::deep .mud-icon-root {
+    color: #B8956E;
+}
+
+.dark-mode .lock-icon-circle {
+    background: linear-gradient(135deg, #424242 0%, #616161 100%);
+}
+
+.dark-mode .lock-icon-circle ::deep .mud-icon-root {
+    color: #F44336;
 }
 
 .lock-icon-circle {
@@ -39,24 +67,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-}
-
-.lock-icon-circle ::deep .mud-icon-root {
-    font-size: 40px;
-    color: #B8956E;
 }
 
 .login-title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #333333;
-    margin-bottom: 4px;
+    color: var(--mud-palette-text-primary);
+ margin-bottom: 4px;
 }
 
 .login-subtitle {
     font-size: 0.875rem;
-    color: #888888;
+    color: var(--mud-palette-text-secondary);
     margin-bottom: 45px;
 }
 
@@ -70,31 +92,41 @@
 }
 
 .pin-input-wrapper ::deep .mud-input-outlined .mud-input-outlined-border {
-    border-color: #e5e7eb;
+    border-color: var(--mud-palette-divider);
 }
 
 .pin-input-wrapper ::deep .mud-input-outlined:hover .mud-input-outlined-border {
-    border-color: #A0826D;
+    border-color: var(--mud-palette-primary);
 }
 
 .pin-input-wrapper ::deep .mud-input-outlined.mud-input-focused .mud-input-outlined-border,
 .pin-input-wrapper ::deep .mud-input-outlined:focus .mud-input-outlined-border,
 .pin-input-wrapper ::deep .mud-input-outlined:focus-within .mud-input-outlined-border {
-    border-color: #A0826D !important;
+    border-color: var(--mud-palette-primary) !important;
     border-width: 2px;
 }
 
 .pin-input-wrapper ::deep .mud-input-text {
     font-size: 1rem;
+    color: var(--mud-palette-text-primary);
 }
 
 .pin-input-wrapper ::deep .mud-input-text:focus {
     outline: none;
-    caret-color: #A0826D;
+    caret-color: var(--mud-palette-primary);
 }
 
 .pin-input-wrapper ::deep .mud-input-adornment .mud-icon-root {
-    color: #888888;
+    color: var(--mud-palette-text-secondary);
+}
+
+.pin-input-wrapper ::deep input {
+    color: var(--mud-palette-text-primary) !important;
+    background-color: transparent !important;
+}
+
+.pin-input-wrapper ::deep input::placeholder {
+    color: var(--mud-palette-text-secondary) !important;
 }
 
 .error-message {
@@ -106,7 +138,7 @@
 
 ::deep .unlock-button.mud-button-root {
     width: 100%;
-    background-color: #A0826D !important;
+    background-color: var(--mud-palette-primary) !important;
     color: #FFFFFF !important;
     border-radius: 8px;
     padding: 12px 16px;
@@ -117,15 +149,15 @@
 }
 
 ::deep .unlock-button.mud-button-root:hover {
-    background-color: #8B7058 !important;
+    background-color: var(--mud-palette-primary-darken) !important;
 }
 
 ::deep .unlock-button.mud-button-root:disabled {
-    background-color: #C4B0A0 !important;
+    background-color: var(--mud-palette-action-disabled) !important;
 }
 
 .failed-attempts {
-    color: #d32f2f;
+color: #d32f2f;
     font-size: 0.85rem;
     margin-top: 16px;
     min-height: 20px;
@@ -151,10 +183,10 @@
     }
 
     .lock-icon-circle ::deep .mud-icon-root {
-        font-size: 35px;
+      font-size: 35px;
     }
-    
-    .failed-attempts {
+
+.failed-attempts {
         bottom: 16px;
     }
 }

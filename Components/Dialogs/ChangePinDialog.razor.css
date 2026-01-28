@@ -2,12 +2,8 @@
     padding: 8px 0;
 }
 
-.change-pin-form .instruction-text {
-    color: #000000 !important;
-}
-
 ::deep .instruction-text {
-color: #000000 !important;
+    color: var(--mud-palette-text-secondary) !important;
 }
 
 .change-pin-form .mud-input-control {

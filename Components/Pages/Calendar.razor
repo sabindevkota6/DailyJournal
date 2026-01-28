@@ -112,18 +112,23 @@ OnClick="NextMonth"
 <div class="entry-preview">
              <div class="entry-header-row">
  <MudText Typo="Typo.h6" Class="entry-title">@entry.Title</MudText>
-  <MudButton Variant="Variant.Outlined" 
-    Class="view-entry-button" 
+  <MudButton Variant="Variant.Filled" 
+  Class="view-entry-button" 
     Size="MudSize.Small"
   StartIcon="@Icons.Material.Filled.Visibility"
     OnClick="@(() => ViewEntry(entry))">
 View Entry
-    </MudButton>
-            </div>
+ </MudButton>
+     </div>
   <MudText Typo="Typo.caption" Class="entry-date">@selectedDate.Value.ToString("MMMM dd, yyyy")</MudText>
 <div class="entry-meta-row">
-    <span class="meta-label">Mood:</span>
-         <span class="mood-chip @GetMoodCategoryClass(moodCategory)">@moodCategory</span>
+    <span class="meta-label">Moods:</span>
+    <span class="mood-chip @GetMoodCategoryClass(moodCategory)">@moodCategory (Primary)</span>
+    <span class="mood-chip mood-chip-secondary">@entry.PrimaryMood</span>
+    @foreach (var mood in entry.SecondaryMoods)
+    {
+     <span class="mood-chip mood-chip-secondary">@mood</span>
+    }
    </div>
    @if (entry.Tags.Any())
  {
@@ -159,62 +164,50 @@ View Entry
 
     protected override async Task OnInitializedAsync()
     {
-    await LoadEntries();
-  }
+        await LoadEntries();
+    }
 
     private async Task LoadEntries()
     {
         try
-        {
-            isLoading = true;
+    {
+         isLoading = true;
    allEntries = await JournalService.SearchAsync();
-            
-       // Group entries by date
-            entriesByDate = allEntries
-     .GroupBy(e => e.Date.Date)
-      .ToDictionary(g => g.Key, g => g.First());
+      
+     entriesByDate = allEntries
+    .GroupBy(e => e.Date.Date)
+     .ToDictionary(g => g.Key, g => g.First());
         }
         catch (Exception ex)
-    {
-  Snackbar.Add($"Error loading entries: {ex.Message}", Severity.Error);
+     {
+      Snackbar.Add($"Error loading entries: {ex.Message}", Severity.Error);
             System.Diagnostics.Debug.WriteLine(ex);
         }
-      finally
-  {
-   isLoading = false;
-        }
+        finally
+        {
+            isLoading = false;
     }
-
-    private string GetMoodEmoji(Mood mood)
-    {
-        return mood switch
- {
-      Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "??",
- Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => "??",
-            Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "??",
-  _ => "??"
-        };
     }
 
     private string GetMoodIcon(Mood mood)
     {
         return mood switch
-   {
+        {
             Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => Icons.Material.Filled.SentimentSatisfied,
-      Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => Icons.Material.Filled.SentimentNeutral,
-            Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => Icons.Material.Filled.SentimentDissatisfied,
+   Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => Icons.Material.Filled.SentimentNeutral,
+      Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => Icons.Material.Filled.SentimentDissatisfied,
     _ => Icons.Material.Filled.SentimentNeutral
-     };
+  };
     }
 
     private MudColor GetMoodIconColor(Mood mood)
     {
         return mood switch
-        {
-  Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => MudColor.Success,
-          Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => MudColor.Default,
-       Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => MudColor.Error,
-         _ => MudColor.Default
+ {
+     Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => MudColor.Success,
+            Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => MudColor.Default,
+            Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => MudColor.Error,
+            _ => MudColor.Default
         };
     }
 
@@ -223,71 +216,51 @@ View Entry
         var firstDay = new DateTime(currentMonth.Year, currentMonth.Month, 1);
         var lastDay = firstDay.AddMonths(1).AddDays(-1);
    
-        var startDate = firstDay.AddDays(-(int)firstDay.DayOfWeek);
+   var startDate = firstDay.AddDays(-(int)firstDay.DayOfWeek);
         var endDate = lastDay.AddDays(6 - (int)lastDay.DayOfWeek);
         
-        var days = new List<DateTime>();
+   var days = new List<DateTime>();
         for (var date = startDate; date <= endDate; date = date.AddDays(1))
-     {
-   days.Add(date);
-      }
-        
-      return days;
+        {
+            days.Add(date);
+        }
+    
+        return days;
     }
 
     private string GetDayClass(DateTime day)
     {
- var baseClass = "calendar-day";
-        
+      var baseClass = "calendar-day";
+
         if (day.Month != currentMonth.Month)
-      baseClass += " other-month";
+        baseClass += " other-month";
         
         if (day.Date == selectedDate?.Date)
-      baseClass += " selected";
+            baseClass += " selected";
         
-      if (entriesByDate.ContainsKey(day.Date))
-      baseClass += " has-entry";
+   if (entriesByDate.ContainsKey(day.Date))
+            baseClass += " has-entry";
         
         return baseClass;
-    }
-
-    private MudColor GetMoodChipColor(Mood mood)
-    {
-      return mood switch
-     {
-      Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Calm or Mood.Confident => MudColor.Success,
-            Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => MudColor.Error,
-      _ => MudColor.Default
-        };
-    }
-
-    private string GetMoodTextClass(Mood mood)
-    {
-        return mood switch
- {
-          Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "mood-positive",
-         Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "mood-negative",
-     _ => "mood-neutral"
-        };
     }
 
     private string GetMoodCategory(Mood mood)
     {
         return mood switch
         {
-         Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "Positive",
-            Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "Negative",
-      _ => "Neutral"
-      };
+  Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "Positive",
+       Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "Negative",
+            _ => "Neutral"
+ };
     }
 
     private string GetMoodCategoryClass(string category)
     {
         return category.ToLower() switch
-        {
-          "positive" => "mood-chip-positive",
+    {
+    "positive" => "mood-chip-positive",
             "negative" => "mood-chip-negative",
- _ => "mood-chip-neutral"
+    _ => "mood-chip-neutral"
         };
     }
 
@@ -295,19 +268,19 @@ View Entry
     {
         currentMonth = currentMonth.AddMonths(-1);
         selectedDate = null;
-    }
+  }
 
     private void NextMonth()
     {
         var today = DateTime.Now.Date;
-  if (currentMonth.Month == today.Month && currentMonth.Year == today.Year)
+        if (currentMonth.Month == today.Month && currentMonth.Year == today.Year)
             return;
         
-      currentMonth = currentMonth.AddMonths(1);
+currentMonth = currentMonth.AddMonths(1);
         selectedDate = null;
     }
 
-  private void OnDayClick(DateTime day)
+    private void OnDayClick(DateTime day)
     {
         selectedDate = day.Date;
     }

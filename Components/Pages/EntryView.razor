@@ -1,0 +1,222 @@
+@page "/entry-view/{EntryId:guid}"
+@inject DailyJournal.Core.Services.IJournalService JournalService
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@using MudBlazor
+@using DailyJournal.Data.Models
+
+<div class="back-button-section">
+    <MudButton Variant="Variant.Text" 
+        StartIcon="@Icons.Material.Filled.ArrowBack" 
+   OnClick="@(() => Nav.NavigateTo("/timeline"))"
+      Class="back-button">
+   Back to All Entries
+    </MudButton>
+    @if (entry != null)
+    {
+    <div class="action-buttons-group">
+            <MudButton Variant="Variant.Filled" 
+         StartIcon="@Icons.Material.Filled.Edit"
+        Class="action-button"
+ OnClick="@(() => Nav.NavigateTo($"/entry-edit/{entry.Id}"))">
+     Edit
+            </MudButton>
+    <MudButton Variant="Variant.Filled"
+  StartIcon="@Icons.Material.Filled.Delete"
+               Class="action-button"
+           OnClick="@(() => DeleteEntry(entry))">
+             Delete
+            </MudButton>
+        </div>
+    }
+</div>
+
+<div class="entry-view-container">
+  @if (isLoading)
+    {
+        <div class="loading-section">
+    <MudProgressCircular Color="MudColor.Primary" Indeterminate="true" />
+      </div>
+ }
+    else if (entry == null)
+    {
+        <MudAlert Severity="Severity.Error">Entry not found</MudAlert>
+        <MudButton Variant="Variant.Text" OnClick="@(() => Nav.NavigateTo("/timeline"))" Class="mt-3">
+            Back to Timeline
+        </MudButton>
+    }
+    else
+    {
+        <MudPaper Class="pa-4">
+            <div class="entry-meta-section">
+                <div class="meta-info-row">
+  <div class="meta-item">
+ <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Size="MudSize.Small" Class="meta-icon" />
+       <MudText Typo="Typo.body2" Color="MudColor.Secondary">
+    @entry.Date.ToString("dddd, MMMM dd, yyyy")
+       </MudText>
+         </div>
+            <div class="meta-item">
+           <MudIcon Icon="@Icons.Material.Filled.AccessTime" Size="MudSize.Small" Class="meta-icon" />
+        <MudText Typo="Typo.body2" Color="MudColor.Secondary">
+    @entry.CreatedAt.ToString("hh:mm tt")
+     </MudText>
+         </div>
+         <div class="meta-item">
+       <MudText Typo="Typo.body2" Color="MudColor.Secondary">
+       @GetWordCount(entry.Content) words
+             </MudText>
+           </div>
+            </div>
+
+          <div class="moods-tags-row">
+    <div class="moods-group">
+           <MudText Typo="Typo.body2" Class="section-label">Moods:</MudText>
+   <span class="mood-chip mood-chip-primary">@((entry.Category ?? Category.Neutral).ToString()) (Primary)</span>
+   <MudChip T="string" Size="MudSize.Small" Variant="Variant.Outlined">@entry.PrimaryMood</MudChip>
+    @foreach (var mood in entry.SecondaryMoods)
+     {
+         <MudChip T="string" Size="MudSize.Small" Variant="Variant.Outlined">@mood</MudChip>
+         }
+      </div>
+
+   @if (entry.Tags.Any())
+   {
+       <div class="tags-group">
+   <MudText Typo="Typo.body2" Class="section-label">Tags:</MudText>
+       @foreach (var tag in entry.Tags)
+  {
+      <MudChip T="string" Size="MudSize.Small" Color="MudColor.Default">@tag</MudChip>
+           }
+       </div>
+     }
+     </div>
+ </div>
+
+            <MudDivider Class="my-4" Style="border-color: grey;" />
+
+ <MudText Typo="Typo.h5" Class="entry-title mt-4 mb-4" Style="color: black;">@entry.Title</MudText>
+            <div class="entry-content">
+        @((MarkupString)entry.Content)
+            </div>
+
+            <MudDivider Class="my-4" Style="border-color: grey;" />
+
+    <div class="timestamp-section">
+                <MudText Typo="Typo.body2" Color="MudColor.Secondary">
+             Created: @entry.CreatedAt.ToString("dddd, MMMM dd, yyyy 'at' hh:mm tt")
+     </MudText>
+    <MudText Typo="Typo.body2" Color="MudColor.Secondary">
+      Last updated: @entry.UpdatedAt.ToString("dddd, MMMM dd, yyyy 'at' hh:mm tt")
+          </MudText>
+          </div>
+        </MudPaper>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid EntryId { get; set; }
+
+    private JournalEntry? entry;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+   try
+      {
+ await LoadEntry();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error initializing EntryView: {ex.Message}");
+   Snackbar.Add("Error initializing page", Severity.Error);
+      }
+    }
+
+    private async Task LoadEntry()
+    {
+        try
+        {
+  isLoading = true;
+   entry = await JournalService.GetEntryByIdAsync(EntryId);
+
+    if (entry == null)
+            {
+      Snackbar.Add("Entry not found", Severity.Warning);
+                System.Diagnostics.Debug.WriteLine($"Entry not found with ID: {EntryId}");
+ }
+       else
+     {
+    System.Diagnostics.Debug.WriteLine($"Entry loaded: {entry.Title}");
+        }
+        }
+   catch (Exception ex)
+        {
+   Snackbar.Add($"Error loading entry: {ex.Message}", Severity.Error);
+   System.Diagnostics.Debug.WriteLine($"Error loading entry: {ex}");
+        }
+        finally
+   {
+            isLoading = false;
+        }
+    }
+
+    private async Task DeleteEntry(JournalEntry entry)
+    {
+        try
+        {
+       var result = await DialogService.ShowMessageBox(
+      "Delete Entry",
+             $"Are you sure you want to delete the entry from {entry.Date:MMMM dd, yyyy}? This action cannot be undone.",
+            yesText: "Delete",
+      cancelText: "Cancel");
+
+            if (result == true)
+            {
+    try
+             {
+             var deleted = await JournalService.DeleteEntryByIdAsync(entry.Id);
+         if (deleted)
+   {
+  Snackbar.Add("Entry deleted successfully", Severity.Success);
+       Nav.NavigateTo("/timeline");
+          }
+          else
+         {
+          Snackbar.Add("Entry not found", Severity.Warning);
+   }
+                }
+      catch (Exception deleteEx)
+                {
+     Snackbar.Add($"Error deleting entry: {deleteEx.Message}", Severity.Error);
+System.Diagnostics.Debug.WriteLine($"Error deleting entry: {deleteEx}");
+        }
+            }
+  }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error showing delete dialog: {ex.Message}");
+            Snackbar.Add("Error showing delete confirmation", Severity.Error);
+        }
+    }
+
+    private int GetWordCount(string content)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(content))
+   return 0;
+
+ var text = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
+      var words = text.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            return words.Length;
+        }
+   catch (Exception ex)
+        {
+    System.Diagnostics.Debug.WriteLine($"Error counting words: {ex.Message}");
+            return 0;
+    }
+    }
+}

@@ -1,11 +1,11 @@
 .new-entry-container {
-    max-width: 100%;
+  max-width: 100%;
     margin: 0;
     padding: 24px 150px;
 }
 
 .new-entry-header {
-  display: flex;
+    display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
@@ -15,11 +15,12 @@
 
 ::deep .entry-title {
     font-weight: 600;
+    color: var(--mud-palette-text-primary);
 }
 
 ::deep .entry-date {
     margin-top: 4px;
-    color: #9e9e9e !important;
+    color: var(--mud-palette-text-secondary) !important;
 }
 
 .header-actions {
@@ -29,26 +30,26 @@
 }
 
 ::deep .cancel-button.mud-button-root {
-    background-color: #D1D5DB !important;
-    color: #374151 !important;
-    text-transform: none;
-    font-weight: 500;
+    background-color: var(--mud-palette-action-default-hover) !important;
+    color: var(--mud-palette-text-primary) !important;
+  text-transform: none;
+font-weight: 500;
     padding: 10px 20px;
     border-radius: 8px;
     box-shadow: none;
 }
 
 ::deep .cancel-button.mud-button-root:hover {
-    background-color: #C4C8CC !important;
+    background-color: var(--mud-palette-action-disabled) !important;
 }
 
 ::deep .cancel-button.mud-button-root .mud-icon-root {
-    color: #374151;
+    color: var(--mud-palette-text-primary);
     font-size: 20px;
 }
 
 ::deep .save-button.mud-button-root {
- background-color: #A0826D !important;
+    background-color: var(--mud-palette-primary) !important;
     color: #FFFFFF !important;
     text-transform: none;
     font-weight: 500;
@@ -58,7 +59,7 @@
 }
 
 ::deep .save-button.mud-button-root:hover {
-    background-color: #8B7058 !important;
+    background-color: var(--mud-palette-primary-darken) !important;
 }
 
 ::deep .save-button.mud-button-root .mud-icon-root {
@@ -67,33 +68,35 @@
 }
 
 .new-entry-content {
-    display: flex;
+  display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
 .section-title {
-    font-size: 0.95rem;
+ font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: 8px;
+ margin-bottom: 8px;
+    color: var(--mud-palette-text-primary);
 }
 
 .subsection-title {
     font-weight: 500;
     margin-bottom: 12px;
+    color: var(--mud-palette-text-primary);
 }
 
 .quill-editor {
     min-height: 250px;
-    background: white;
+    background: var(--mud-palette-surface);
     border: none;
     border-radius: 0;
 }
 
 .word-count {
- text-align: right;
+    text-align: right;
     font-size: 0.85rem;
- color: var(--mud-palette-text-secondary);
+    color: var(--mud-palette-text-secondary);
     margin-bottom: 8px;
 }
 
@@ -103,25 +106,25 @@
 
 .mood-chips {
     display: flex;
-    gap: 8px;
+  gap: 8px;
     flex-wrap: wrap;
     margin-top: 12px;
 }
 
 .mood-chip-btn {
     padding: 8px 16px;
-    border: 1px solid #d0d0d0;
+    border: 1px solid var(--mud-palette-divider);
     border-radius: 16px;
-    background: white;
-    color: #666;
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-secondary);
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .mood-chip-btn:hover {
-    border-color: #9b7b63;
-    background: #f5f5f0;
+    border-color: var(--mud-palette-primary);
+    background: var(--mud-palette-action-default-hover);
 }
 
 .mood-chip-btn.active {
@@ -130,7 +133,7 @@
 
 .mood-chip-btn.active.positive {
     background: #4caf50;
-    color: white;
+  color: white;
     border-color: #4caf50;
 }
 
@@ -142,13 +145,13 @@
 
 .mood-chip-btn.active.negative {
     background: #f44336;
- color: white;
+    color: white;
     border-color: #f44336;
 }
 
 .specific-moods-section {
     padding: 16px;
-    background-color: var(--mud-palette-surface);
+  background-color: var(--mud-palette-action-default-hover);
     border-radius: 6px;
     border: 1px solid var(--mud-palette-divider);
 }
@@ -161,36 +164,36 @@
 }
 
 .mood-chip-btn-small {
-  padding: 6px 14px;
-    border: 1px solid #d0d0d0;
+    padding: 6px 14px;
+    border: 1px solid var(--mud-palette-divider);
     border-radius: 16px;
-    background: white;
-    color: #666;
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-secondary);
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .mood-chip-btn-small:hover {
-    border-color: #9b7b63;
-    background: #f5f5f0;
+    border-color: var(--mud-palette-primary);
+    background: var(--mud-palette-action-default-hover);
 }
 
 .mood-chip-btn-small.active {
-    background: #9b7b63;
+    background: var(--mud-palette-primary);
     color: white;
-    border-color: #9b7b63;
+  border-color: var(--mud-palette-primary);
     font-weight: 500;
 }
 
 .tags-section {
-  display: flex;
+    display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
 .custom-tag-input {
-    display: flex;
+  display: flex;
     gap: 8px;
     align-items: center;
 }
@@ -228,17 +231,17 @@
     gap: 8px;
     flex-wrap: wrap;
     padding: 12px;
-    background-color: var(--mud-palette-surface);
+    background-color: var(--mud-palette-action-default-hover);
     border-radius: 6px;
     border: 1px solid var(--mud-palette-divider);
 }
 
 .tag-chip {
     padding: 6px 12px;
-    border: 1px solid #d0d0d0;
+    border: 1px solid var(--mud-palette-divider);
     border-radius: 16px;
-    background: white;
-    color: #666;
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-secondary);
     font-size: 0.8rem;
     cursor: pointer;
     transition: all 0.2s;
@@ -249,14 +252,14 @@
 }
 
 .tag-chip:hover {
-    border-color: #9b7b63;
-    background: #f5f5f0;
+    border-color: var(--mud-palette-primary);
+ background: var(--mud-palette-action-default-hover);
 }
 
 .tag-chip.active {
-    background: #9b7b63;
+    background: var(--mud-palette-primary);
     color: white;
-    border-color: #9b7b63;
+    border-color: var(--mud-palette-primary);
 }
 
 .tag-close-btn {
@@ -279,15 +282,18 @@
     background-color: var(--mud-palette-surface);
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
+    border-color: var(--mud-palette-divider);
 }
 
 .quill-editor ::deep .ql-container {
     font-size: 1rem;
     min-height: 200px;
+    border-color: var(--mud-palette-divider);
 }
 
 .quill-editor ::deep .ql-editor {
     min-height: 200px;
+    color: var(--mud-palette-text-primary);
 }
 
 .quill-editor ::deep .ql-editor.ql-blank::before {
@@ -297,24 +303,24 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .new-entry-container {
-     padding: 16px;
+  .new-entry-container {
+        padding: 16px;
     }
 
     .new-entry-header {
-        flex-direction: column;
+     flex-direction: column;
         align-items: flex-start;
         gap: 12px;
     }
 
     .header-actions {
-        width: 100%;
-   justify-content: space-between;
+ width: 100%;
+        justify-content: space-between;
     }
 
     .mood-chips-wrap, .prebuilt-tags {
-        gap: 6px;
- }
+gap: 6px;
+    }
 
     .custom-tag-input {
         flex-direction: column;

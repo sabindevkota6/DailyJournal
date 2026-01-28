@@ -3,8 +3,8 @@
     flex-direction: column;
     padding: 24px 20px;
     height: 100%;
-    background-color: #FFFFFF;
-    border-right: 1px solid #F0EBE3;
+    background-color: var(--mud-palette-drawer-background);
+    border-right: 1px solid var(--mud-palette-divider);
 }
 
 .nav-header {
@@ -20,7 +20,7 @@
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background-color: #A0826D;
+    background-color: var(--mud-palette-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,11 +34,11 @@
 .nav-header span {
     font-size: 1.19rem;
     font-weight: 600;
-    color: #A0826D;
+    color: var(--mud-palette-primary);
 }
 
 .nav-menu ::deep .new-entry-btn.mud-button-root {
-    background-color: #A0826D !important;
+    background-color: var(--mud-palette-primary) !important;
     color: #FFFFFF !important;
     border-radius: 8px;
     padding: 12px 20px;
@@ -51,7 +51,7 @@
 }
 
 .nav-menu ::deep .new-entry-btn.mud-button-root:hover {
-    background-color: #8B7058 !important;
+    background-color: var(--mud-palette-primary-darken) !important;
 }
 
 .nav-menu ::deep .new-entry-btn.mud-button-root .mud-icon-root {
@@ -73,7 +73,7 @@
     box-sizing: border-box;
     padding: 12px 20px;
     border-radius: 8px;
-    color: #666666;
+    color: var(--mud-palette-text-secondary);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
@@ -81,26 +81,26 @@
 }
 
 ::deep a.nav-link-item .mud-icon-root {
-    color: #666666;
+    color: var(--mud-palette-text-secondary);
     font-size: 22px;
 }
 
 ::deep a.nav-link-item:hover {
-    background-color: #F5F0E8;
-    color: #555555;
+    background-color: var(--mud-palette-action-default-hover);
+    color: var(--mud-palette-text-primary);
 }
 
 ::deep a.nav-link-item:hover .mud-icon-root {
-    color: #555555;
+    color: var(--mud-palette-text-primary);
 }
 
 ::deep a.nav-link-item.active {
-    background-color: #F5F0E8;
-    color: #555555;
+ background-color: rgba(160, 130, 109, 0.15);
+    color: var(--mud-palette-primary);
 }
 
 ::deep a.nav-link-item.active .mud-icon-root {
-    color: #555555;
+    color: var(--mud-palette-primary);
 }
 
 @media (max-width: 768px) {

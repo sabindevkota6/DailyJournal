@@ -48,27 +48,27 @@
 MaxLength="4"
    Adornment="Adornment.End"
     AdornmentIcon="@confirmPinEyeIcon"
-           OnAdornmentClick="ToggleConfirmPinVisibility"
-           HelperText="Re-enter your new PIN to confirm"
+       OnAdornmentClick="ToggleConfirmPinVisibility"
+   HelperText="Re-enter your new PIN to confirm"
           Error="@(!string.IsNullOrEmpty(confirmPinError))"
        ErrorText="@confirmPinError" />
 
-            @if (isChangingPin)
+    @if (isChangingPin)
       {
                 <div class="mt-4 text-center">
      <MudProgressCircular Size="MudSize.Small" Indeterminate="true" />
-              </div>
+    </div>
         }
         </div>
     </DialogContent>
-    <DialogActions>
+<DialogActions>
         <MudButton OnClick="ChangePinAsync"
-   Variant="Variant.Filled"
-      Color="MudColor.Primary"
-      Disabled="@isChangingPin"
-    FullWidth="true">
-    Change PIN
-    </MudButton>
+    Variant="Variant.Filled"
+       Color="MudColor.Primary"
+          Disabled="@isChangingPin"
+     FullWidth="true">
+  Change PIN
+        </MudButton>
     </DialogActions>
 </MudDialog>
 
