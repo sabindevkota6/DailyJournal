@@ -1,0 +1,328 @@
+.entry-edit-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 24px 150px;
+}
+
+.loading-section {
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px;
+}
+
+.entry-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--mud-palette-divider);
+}
+
+::deep .entry-title {
+    font-weight: 600;
+    color: var(--mud-palette-text-primary);
+}
+
+::deep .entry-date {
+    margin-top: 4px;
+    color: var(--mud-palette-text-secondary) !important;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+::deep .cancel-button.mud-button-root {
+    background-color: var(--mud-palette-action-default-hover) !important;
+    color: var(--mud-palette-text-primary) !important;
+    text-transform: none;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+::deep .cancel-button.mud-button-root:hover {
+    background-color: var(--mud-palette-action-disabled) !important;
+}
+
+::deep .cancel-button.mud-button-root .mud-icon-root {
+    color: var(--mud-palette-text-primary);
+    font-size: 20px;
+}
+
+::deep .save-button.mud-button-root {
+    background-color: var(--mud-palette-primary) !important;
+  color: #FFFFFF !important;
+    text-transform: none;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+::deep .save-button.mud-button-root:hover {
+    background-color: var(--mud-palette-primary-darken) !important;
+}
+
+::deep .save-button.mud-button-root .mud-icon-root {
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+.entry-edit-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--mud-palette-text-primary);
+}
+
+.subsection-title {
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: var(--mud-palette-text-primary);
+}
+
+.quill-editor {
+ min-height: 250px;
+    background: var(--mud-palette-surface);
+    border: none;
+    border-radius: 0;
+}
+
+.mood-category-section {
+    margin-bottom: 16px;
+}
+
+.mood-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.mood-chip-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--mud-palette-divider);
+    border-radius: 16px;
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mood-chip-btn:hover {
+    border-color: var(--mud-palette-primary);
+    background: var(--mud-palette-action-default-hover);
+}
+
+.mood-chip-btn.active {
+    font-weight: 500;
+}
+
+.mood-chip-btn.active.positive {
+    background: #4caf50;
+    color: white;
+    border-color: #4caf50;
+}
+
+.mood-chip-btn.active.neutral {
+    background: #9e9e9e;
+    color: white;
+    border-color: #9e9e9e;
+}
+
+.mood-chip-btn.active.negative {
+    background: #f44336;
+    color: white;
+    border-color: #f44336;
+}
+
+.specific-moods-section {
+    padding: 16px;
+    background-color: var(--mud-palette-action-default-hover);
+    border-radius: 6px;
+    border: 1px solid var(--mud-palette-divider);
+}
+
+.mood-chips-wrap {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.mood-chip-btn-small {
+    padding: 6px 14px;
+    border: 1px solid var(--mud-palette-divider);
+    border-radius: 16px;
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mood-chip-btn-small:hover {
+    border-color: var(--mud-palette-primary);
+    background: var(--mud-palette-action-default-hover);
+}
+
+.mood-chip-btn-small.active {
+    background: var(--mud-palette-primary);
+    color: white;
+    border-color: var(--mud-palette-primary);
+    font-weight: 500;
+}
+
+.tags-section {
+ display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.custom-tag-input {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.tag-textfield {
+    flex: 1;
+}
+
+::deep .add-tag-btn.mud-button-root {
+    text-transform: none;
+    font-weight: 500;
+    padding: 12px 20px;
+    min-height: 50px;
+    min-width: 90px;
+}
+
+.show-tags-btn, .hide-tags-btn {
+    align-self: flex-start;
+}
+
+.show-tags-btn ::deep .mud-button-root,
+.hide-tags-btn ::deep .mud-button-root {
+    text-transform: none;
+    color: var(--mud-palette-primary);
+}
+
+.selected-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.prebuilt-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px;
+    background-color: var(--mud-palette-action-default-hover);
+    border-radius: 6px;
+    border: 1px solid var(--mud-palette-divider);
+}
+
+.tag-chip {
+    padding: 6px 12px;
+    border: 1px solid var(--mud-palette-divider);
+    border-radius: 16px;
+    background: var(--mud-palette-surface);
+    color: var(--mud-palette-text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tag-chip:hover {
+    border-color: var(--mud-palette-primary);
+    background: var(--mud-palette-action-default-hover);
+}
+
+.tag-chip.active {
+    background: var(--mud-palette-primary);
+    color: white;
+    border-color: var(--mud-palette-primary);
+}
+
+.tag-close-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+}
+
+.tag-close-btn:hover {
+    opacity: 0.7;
+}
+
+/* Quill Editor Customization */
+.quill-editor ::deep .ql-toolbar {
+    background-color: var(--mud-palette-surface);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-color: var(--mud-palette-divider);
+}
+
+.quill-editor ::deep .ql-container {
+    font-size: 1rem;
+    min-height: 200px;
+    border-color: var(--mud-palette-divider);
+}
+
+.quill-editor ::deep .ql-editor {
+ min-height: 200px;
+    color: var(--mud-palette-text-primary);
+}
+
+.quill-editor ::deep .ql-editor.ql-blank::before {
+    color: var(--mud-palette-text-disabled);
+    font-style: normal;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .entry-edit-container {
+        padding: 16px;
+    }
+
+    .entry-edit-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .mood-chips-wrap, .prebuilt-tags {
+        gap: 6px;
+    }
+
+    .custom-tag-input {
+      flex-direction: column;
+        align-items: stretch;
+    }
+}

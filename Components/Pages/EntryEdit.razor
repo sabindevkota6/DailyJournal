@@ -1,0 +1,376 @@
+@page "/entry-edit/{EntryId:guid}"
+@inject IJSRuntime JS
+@inject DailyJournal.Core.Services.IJournalService JournalService
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@using MudBlazor
+@using DailyJournal.Data.Models
+@implements IAsyncDisposable
+
+<div class="entry-edit-container">
+    @if (isLoading)
+    {
+   <div class="loading-section">
+     <MudProgressCircular Color="MudColor.Primary" Indeterminate="true" />
+</div>
+    }
+    else if (entry == null)
+  {
+   <MudAlert Severity="Severity.Error">Entry not found</MudAlert>
+      <MudButton Variant="Variant.Text" OnClick="@(() => Nav.NavigateTo("/timeline"))" Class="mt-3">
+    Back to Timeline
+   </MudButton>
+    }
+  else
+    {
+<div class="entry-edit-header">
+   <div>
+   <MudText Typo="Typo.h5" Class="entry-title">Edit Entry</MudText>
+ <MudText Typo="Typo.body2" Class="entry-date">@entry.Date.ToString("dddd, MMMM dd, yyyy")</MudText>
+ </div>
+  <div class="header-actions">
+      <MudButton Variant="Variant.Filled"
+      StartIcon="@Icons.Material.Filled.Close"
+  OnClick="Cancel"
+          Class="cancel-button">
+       Cancel
+      </MudButton>
+    <MudButton Variant="Variant.Filled"
+        StartIcon="@Icons.Material.Filled.Save"
+        OnClick="SaveEntry"
+      Class="save-button">
+     Save Changes
+    </MudButton>
+ </div>
+  </div>
+
+        <div class="entry-edit-content">
+        <!-- Title Input -->
+<div class="section-title">Title *</div>
+        <MudTextField @bind-Value="title" Placeholder="Give your entry a title..." Variant="Variant.Outlined" Class="title-input" />
+
+   <!-- Content Editor with Quill -->
+    <div class="section-title">Content *</div>
+ <div id="quill-editor-edit" class="quill-editor"></div>
+
+    <!-- Mood Selection -->
+   <div class="section-title">Mood * (Select Primary Category, then up to 2 specific moods)</div>
+
+       <div class="mood-category-section">
+    <MudText Typo="Typo.body2" Class="subsection-title">Primary Mood Category</MudText>
+    <div class="mood-chips">
+ <button class="mood-chip-btn @(selectedCategory == Category.Positive ? "active positive" : "")" 
+     @onclick="@(() => SelectCategory(Category.Positive))">Positive</button>
+   <button class="mood-chip-btn @(selectedCategory == Category.Neutral ? "active neutral" : "")" 
+   @onclick="@(() => SelectCategory(Category.Neutral))">Neutral</button>
+      <button class="mood-chip-btn @(selectedCategory == Category.Negative ? "active negative" : "")" 
+         @onclick="@(() => SelectCategory(Category.Negative))">Negative</button>
+     </div>
+ </div>
+
+   @if (selectedCategory.HasValue)
+{
+    <div class="specific-moods-section">
+<MudText Typo="Typo.body2" Class="subsection-title">Select specific moods for @selectedCategory.Value:</MudText>
+  <div class="mood-chips-wrap">
+    @foreach (var mood in GetMoodsForCategory(selectedCategory.Value))
+   {
+     <button class="mood-chip-btn-small @(selectedMoods.Contains(mood) ? "active" : "")" 
+     @onclick="@(() => ToggleMood(mood))">
+   @mood
+   </button>
+       }
+</div>
+     @if (selectedMoods.Count == 0)
+ {
+  <MudText Typo="Typo.caption" Color="MudColor.Error">None selected</MudText>
+       }
+  </div>
+  }
+
+    <!-- Tags Section -->
+   <div class="section-title">Tags (Optional)</div>
+       <div class="tags-section">
+   <div class="custom-tag-input">
+  <MudTextField @bind-Value="customTag" Placeholder="Custom tag..." Variant="Variant.Outlined" Class="tag-textfield" />
+  <MudButton Variant="Variant.Filled" Color="MudColor.Default" OnClick="AddCustomTag" Class="add-tag-btn">ADD</MudButton>
+            </div>
+
+      @if (!showPrebuiltTags)
+   {
+   <MudButton Variant="Variant.Text" OnClick="@(() => showPrebuiltTags = true)" StartIcon="@Icons.Material.Filled.Add" Class="show-tags-btn">
+     Show Tags
+       </MudButton>
+      }
+        else
+    {
+      <MudButton Variant="Variant.Text" OnClick="@(() => showPrebuiltTags = false)" StartIcon="@Icons.Material.Filled.Remove" Class="hide-tags-btn">
+     Hide Tags
+   </MudButton>
+ }
+
+   @if (selectedTags.Any())
+   {
+       <div class="selected-tags">
+         @foreach (var tag in selectedTags)
+   {
+     <span class="tag-chip active">
+  @tag
+    <button class="tag-close-btn" @onclick="@(() => RemoveTag(tag))">×</button>
+   </span>
+         }
+  </div>
+}
+
+    @if (showPrebuiltTags)
+    {
+        <div class="prebuilt-tags">
+       @foreach (var tag in PrebuiltTags)
+   {
+   <button class="tag-chip @(selectedTags.Contains(tag) ? "active" : "")" 
+ @onclick="@(() => ToggleTag(tag))">
+     @tag
+    </button>
+ }
+     </div>
+     }
+  </div>
+        </div>
+ }
+</div>
+
+@code {
+    [Parameter]
+    public Guid EntryId { get; set; }
+
+    private JournalEntry? entry;
+    private bool isLoading = true;
+    private bool editorInitialized = false;
+    private bool editorInitializing = false; // Flag to prevent concurrent initialization
+
+    private string title = "";
+    private string content = "";
+    private Category? selectedCategory;
+    private List<Mood> selectedMoods = new();
+    private HashSet<string> selectedTags = new();
+    private string customTag = "";
+    private bool showPrebuiltTags = false;
+
+    private readonly string[] PrebuiltTags = new[]
+    {
+        "Work", "Career", "Studies", "Projects", "Planning", "Family", "Friends", "Relationships", "Parenting", "Health",
+        "Fitness", "Exercise", "Self-care", "Meditation", "Yoga", "Personal Growth", "Reflection", "Reading", "Writing",
+        "Hobbies", "Travel", "Nature", "Music", "Cooking", "Shopping", "Birthday", "Holiday", "Vacation", "Celebration",
+        "Finance", "Spirituality"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+      await LoadEntry();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (entry != null && !editorInitialized && !editorInitializing && !isLoading)
+        {
+      editorInitializing = true;
+ try
+            {
+   await JS.InvokeVoidAsync("quillInterop.destroy", "quill-editor-edit");
+
+    await JS.InvokeVoidAsync("quillInterop.create", "quill-editor-edit", false, "Write your thoughts...");
+        await JS.InvokeVoidAsync("quillInterop.setHTML", "quill-editor-edit", entry.Content);
+                editorInitialized = true;
+        }
+     catch (Exception ex)
+      {
+             System.Diagnostics.Debug.WriteLine($"Error initializing Quill editor: {ex.Message}");
+      editorInitializing = false;
+       }
+        }
+    }
+
+    private async Task LoadEntry()
+    {
+   try
+    {
+       isLoading = true;
+       entry = await JournalService.GetEntryByIdAsync(EntryId);
+    if (entry == null)
+         {
+        Snackbar.Add("Entry not found", Severity.Warning);
+    }
+        else
+       {
+       title = entry.Title;
+             content = entry.Content;
+             selectedCategory = entry.Category;
+      selectedMoods = new List<Mood> { entry.PrimaryMood };
+                if (entry.SecondaryMoods.Any())
+     {
+             selectedMoods.AddRange(entry.SecondaryMoods);
+ }
+                selectedTags = entry.Tags.ToHashSet();
+            }
+        }
+        catch (Exception ex)
+    {
+            Snackbar.Add($"Error loading entry: {ex.Message}", Severity.Error);
+       System.Diagnostics.Debug.WriteLine(ex);
+        }
+        finally
+    {
+            isLoading = false;
+        }
+    }
+
+    private void SelectCategory(Category category)
+ {
+        try
+        {
+            selectedCategory = category;
+     selectedMoods.Clear(); // Clear moods when category changes to prevent cross-category selection
+      }
+        catch (Exception ex)
+      {
+      System.Diagnostics.Debug.WriteLine($"Error selecting category: {ex.Message}");
+    }
+  }
+
+    private List<Mood> GetMoodsForCategory(Category category) => category switch
+    {
+        Category.Positive => new() { Mood.Happy, Mood.Excited, Mood.Relaxed, Mood.Grateful, Mood.Confident },
+        Category.Neutral => new() { Mood.Calm, Mood.Thoughtful, Mood.Curious, Mood.Nostalgic, Mood.Bored },
+        Category.Negative => new() { Mood.Sad, Mood.Angry, Mood.Stressed, Mood.Lonely, Mood.Anxious },
+        _ => new()
+    };
+
+    private void ToggleMood(Mood mood)
+    {
+        try
+        {
+          if (selectedMoods.Contains(mood))
+         {
+           selectedMoods.Remove(mood);
+            }
+       else if (selectedMoods.Count < 2)
+            {
+       selectedMoods.Add(mood);
+      }
+      else
+  {
+            Snackbar.Add("You can select up to 2 specific moods. The oldest selection was replaced.", Severity.Info);
+      selectedMoods.RemoveAt(0);
+              selectedMoods.Add(mood);
+         }
+        }
+        catch (Exception ex)
+    {
+            System.Diagnostics.Debug.WriteLine($"Error toggling mood: {ex.Message}");
+   Snackbar.Add("Error updating mood selection", Severity.Warning);
+    }
+    }
+
+    private void ToggleTag(string tag)
+    {
+      try
+   {
+            if (selectedTags.Contains(tag))
+    selectedTags.Remove(tag);
+       else
+                selectedTags.Add(tag);
+        }
+        catch (Exception ex)
+    {
+    System.Diagnostics.Debug.WriteLine($"Error toggling tag: {ex.Message}");
+        }
+    }
+
+    private void RemoveTag(string tag)
+ {
+        try
+    {
+        selectedTags.Remove(tag);
+        }
+        catch (Exception ex)
+  {
+            System.Diagnostics.Debug.WriteLine($"Error removing tag: {ex.Message}");
+   }
+    }
+
+    private void AddCustomTag()
+  {
+        try
+  {
+        if (!string.IsNullOrWhiteSpace(customTag))
+  {
+    selectedTags.Add(customTag.Trim());
+             customTag = "";
+     }
+        }
+     catch (Exception ex)
+        {
+   System.Diagnostics.Debug.WriteLine($"Error adding custom tag: {ex.Message}");
+            Snackbar.Add("Error adding tag", Severity.Warning);
+        }
+    }
+
+    private async Task SaveEntry()
+    {
+        try
+        {
+     content = await JS.InvokeAsync<string>("quillInterop.getHTML", "quill-editor-edit");
+
+            if (string.IsNullOrWhiteSpace(title))
+  {
+                Snackbar.Add("Please enter a title", Severity.Warning);
+      return;
+            }
+
+if (string.IsNullOrWhiteSpace(content))
+          {
+       Snackbar.Add("Please write some content", Severity.Warning);
+          return;
+     }
+
+            if (selectedMoods.Count == 0)
+            {
+         Snackbar.Add("Please select at least one mood", Severity.Warning);
+      return;
+       }
+
+            var primaryMood = selectedMoods.First();
+   var secondaryMoods = selectedMoods.Skip(1).ToList();
+
+ await JournalService.UpdateEntryAsync(
+         EntryId,
+   title,
+   content,
+     false,
+      primaryMood,
+         secondaryMoods,
+    selectedCategory,
+   selectedTags.ToList()
+          );
+
+        Snackbar.Add("Entry updated successfully!", Severity.Success);
+        Nav.NavigateTo($"/entry-view/{EntryId}");
+        }
+      catch (Exception ex)
+     {
+    Snackbar.Add($"Error saving entry: {ex.Message}", Severity.Error);
+       System.Diagnostics.Debug.WriteLine(ex);
+        }
+    }
+
+    private void Cancel() => Nav.NavigateTo($"/entry-view/{EntryId}");
+
+    public async ValueTask DisposeAsync()
+    {
+    try
+        {
+      await JS.InvokeVoidAsync("quillInterop.destroy", "quill-editor-edit");
+     }
+        catch { }
+}
+}
