@@ -218,11 +218,13 @@ var percentage = totalEntries > 0 ? (tagUsage.Count * 100.0 / totalEntries) : 0;
     <div class="recent-entry-moods">
     <span class="meta-label">Moods:</span>
      <span class="mood-chip">@((entry.Category ?? Category.Neutral).ToString()) (Primary)</span>
-    <span class="mood-chip mood-secondary">@entry.PrimaryMood</span>
+   @if (entry.SecondaryMoods.Any())
+  {
    @foreach (var mood in entry.SecondaryMoods)
   {
-      <span class="mood-chip mood-secondary">@mood</span>
+  <span class="mood-chip mood-secondary">@mood</span>
   }
+   }
    </div>
  @if (entry.Tags.Any())
      {

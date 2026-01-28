@@ -187,15 +187,17 @@ Size="MudSize.Small"
        <div class="mood-section">
      <span class="mood-label">Primary Mood:</span>
    <span class="mood-chip @GetMoodCategoryClass(entry.Category ?? Category.Neutral)">@((entry.Category ?? Category.Neutral).ToString())</span>
+   @if (entry.SecondaryMoods.Any())
+ {
    <span class="mood-separator">|</span>
    <span class="mood-label">Secondary Mood:</span>
-   <span class="mood-chip mood-chip-secondary">@entry.PrimaryMood</span>
    @foreach (var mood in entry.SecondaryMoods)
  {
-       <span class="mood-chip mood-chip-secondary">@mood</span>
+     <span class="mood-chip mood-chip-secondary">@mood</span>
  }
-       </div>
-       <MudButton Variant="Variant.Filled" Class="view-entry-button" OnClick="@(() => ViewEntry(entry))">View Full Entry</MudButton>
+   }
+     </div>
+ <MudButton Variant="Variant.Filled" Class="view-entry-button" OnClick="@(() => ViewEntry(entry))">View Full Entry</MudButton>
      </div>
    </div>
  </MudCardActions>

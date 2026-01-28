@@ -72,25 +72,27 @@
 
           <div class="moods-tags-row">
     <div class="moods-group">
-           <MudText Typo="Typo.body2" Class="section-label">Moods:</MudText>
+      <MudText Typo="Typo.body2" Class="section-label">Moods:</MudText>
    <span class="mood-chip mood-chip-primary">@((entry.Category ?? Category.Neutral).ToString()) (Primary)</span>
-   <MudChip T="string" Size="MudSize.Small" Variant="Variant.Outlined">@entry.PrimaryMood</MudChip>
-    @foreach (var mood in entry.SecondaryMoods)
+    @if (entry.SecondaryMoods.Any())
+     {
+         @foreach (var mood in entry.SecondaryMoods)
      {
          <MudChip T="string" Size="MudSize.Small" Variant="Variant.Outlined">@mood</MudChip>
-         }
+    }
+      }
       </div>
 
    @if (entry.Tags.Any())
    {
        <div class="tags-group">
    <MudText Typo="Typo.body2" Class="section-label">Tags:</MudText>
-       @foreach (var tag in entry.Tags)
+   @foreach (var tag in entry.Tags)
   {
       <MudChip T="string" Size="MudSize.Small" Color="MudColor.Default">@tag</MudChip>
            }
        </div>
-     }
+  }
      </div>
  </div>
 
