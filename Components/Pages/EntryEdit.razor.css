@@ -56,7 +56,7 @@
 
 ::deep .save-button.mud-button-root {
     background-color: var(--mud-palette-primary) !important;
-  color: #FFFFFF !important;
+    color: #FFFFFF !important;
     text-transform: none;
     font-weight: 500;
     padding: 10px 20px;
@@ -93,7 +93,7 @@
 }
 
 .quill-editor {
- min-height: 250px;
+    min-height: 250px;
     background: var(--mud-palette-surface);
     border: none;
     border-radius: 0;
@@ -118,7 +118,7 @@
     color: var(--mud-palette-text-secondary);
     font-size: 0.9rem;
     cursor: pointer;
-  transition: all 0.2s;
+    transition: all 0.2s;
 }
 
 .mood-chip-btn:hover {
@@ -186,7 +186,7 @@
 }
 
 .tags-section {
- display: flex;
+    display: flex;
     flex-direction: column;
     gap: 12px;
 }

@@ -1,49 +1,54 @@
 ﻿@using MudBlazor
 @inject NavigationManager Nav
 
+<!-- navigation menu component for the sidebar -->
 <div class="nav-menu">
-    <div class="nav-header">
-     <div class="nav-logo-icon">
-     <MudIcon Icon="@Icons.Material.Filled.AutoStories" />
-        </div>
-        <span>Daily Journal</span>
-    </div>
+	<!-- header with app logo and title -->
+	<div class="nav-header">
+		<div class="nav-logo-icon">
+			<MudIcon Icon="@Icons.Material.Filled.AutoStories" />
+		</div>
+		<span>Daily Journal</span>
+	</div>
 
-    <MudButton Variant="Variant.Filled"
-     FullWidth="true"
-      StartIcon="@Icons.Material.Filled.Add"
-       OnClick="@(() => Nav.NavigateTo("/new-entry"))"
-    Class="new-entry-btn">
-        New Entry
-    </MudButton>
+	<!-- new entry button -->
+	<MudButton Variant="Variant.Filled"
+			   FullWidth="true"
+			   StartIcon="@Icons.Material.Filled.Add"
+			   OnClick="@(() => Nav.NavigateTo("/new-entry"))"
+			   Class="new-entry-btn">
+		New Entry
+	</MudButton>
 
-    <nav class="nav-links">
-        <NavLink href="dashboard" class="nav-link-item">
-  <MudIcon Icon="@Icons.Material.Outlined.GridView" />
-            <span>Dashboard</span>
-        </NavLink>
+	<!-- navigation links -->
+	<nav class="nav-links">
+		<NavLink href="dashboard" class="nav-link-item">
+			<MudIcon Icon="@Icons.Material.Outlined.GridView" />
+			<span>Dashboard</span>
+		</NavLink>
 
-   <NavLink href="timeline" class="nav-link-item">
-    <MudIcon Icon="@Icons.Material.Outlined.FormatListBulleted" />
-    <span>All Entries</span>
-        </NavLink>
+		<NavLink href="timeline" class="nav-link-item">
+			<MudIcon Icon="@Icons.Material.Outlined.FormatListBulleted" />
+			<span>All Entries</span>
+		</NavLink>
 
-    <NavLink href="calendar" class="nav-link-item">
- <MudIcon Icon="@Icons.Material.Outlined.CalendarToday" />
-   <span>Calendar</span>
-        </NavLink>
+		<NavLink href="calendar" class="nav-link-item">
+			<MudIcon Icon="@Icons.Material.Outlined.CalendarToday" />
+			<span>Calendar</span>
+		</NavLink>
 
-   <NavLink href="export" class="nav-link-item">
- <MudIcon Icon="@Icons.Material.Outlined.FileDownload" />
-            <span>Export</span>
-        </NavLink>
+		<NavLink href="export" class="nav-link-item">
+			<MudIcon Icon="@Icons.Material.Outlined.FileDownload" />
+			<span>Export</span>
+		</NavLink>
 
- <NavLink href="settings" class="nav-link-item">
-            <MudIcon Icon="@Icons.Material.Outlined.Settings" />
-      <span>Settings</span>
-        </NavLink>
-    </nav>
+		<NavLink href="settings" class="nav-link-item">
+			<MudIcon Icon="@Icons.Material.Outlined.Settings" />
+			<span>Settings</span>
+		</NavLink>
+	</nav>
 </div>
 
 @code {
+	// no code needed for this component as it only contains navigation links
 }

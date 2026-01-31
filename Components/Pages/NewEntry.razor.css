@@ -1,5 +1,5 @@
 .new-entry-container {
-  max-width: 100%;
+    max-width: 100%;
     margin: 0;
     padding: 24px 150px;
 }
@@ -32,8 +32,8 @@
 ::deep .cancel-button.mud-button-root {
     background-color: var(--mud-palette-action-default-hover) !important;
     color: var(--mud-palette-text-primary) !important;
-  text-transform: none;
-font-weight: 500;
+    text-transform: none;
+    font-weight: 500;
     padding: 10px 20px;
     border-radius: 8px;
     box-shadow: none;
@@ -68,15 +68,15 @@ font-weight: 500;
 }
 
 .new-entry-content {
-  display: flex;
+    display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
 .section-title {
- font-size: 0.95rem;
+    font-size: 0.95rem;
     font-weight: 600;
- margin-bottom: 8px;
+    margin-bottom: 8px;
     color: var(--mud-palette-text-primary);
 }
 
@@ -106,7 +106,7 @@ font-weight: 500;
 
 .mood-chips {
     display: flex;
-  gap: 8px;
+    gap: 8px;
     flex-wrap: wrap;
     margin-top: 12px;
 }
@@ -133,7 +133,7 @@ font-weight: 500;
 
 .mood-chip-btn.active.positive {
     background: #4caf50;
-  color: white;
+    color: white;
     border-color: #4caf50;
 }
 
@@ -151,7 +151,7 @@ font-weight: 500;
 
 .specific-moods-section {
     padding: 16px;
-  background-color: var(--mud-palette-action-default-hover);
+    background-color: var(--mud-palette-action-default-hover);
     border-radius: 6px;
     border: 1px solid var(--mud-palette-divider);
 }
@@ -182,7 +182,7 @@ font-weight: 500;
 .mood-chip-btn-small.active {
     background: var(--mud-palette-primary);
     color: white;
-  border-color: var(--mud-palette-primary);
+    border-color: var(--mud-palette-primary);
     font-weight: 500;
 }
 
@@ -193,7 +193,7 @@ font-weight: 500;
 }
 
 .custom-tag-input {
-  display: flex;
+    display: flex;
     gap: 8px;
     align-items: center;
 }
@@ -253,7 +253,7 @@ font-weight: 500;
 
 .tag-chip:hover {
     border-color: var(--mud-palette-primary);
- background: var(--mud-palette-action-default-hover);
+    background: var(--mud-palette-action-default-hover);
 }
 
 .tag-chip.active {
@@ -304,26 +304,30 @@ font-weight: 500;
 /* Responsive */
 @media (max-width: 768px) {
   .new-entry-container {
-        padding: 16px;
-    }
+      padding: 16px;
+      
+  }
+  
+  .new-entry-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
 
-    .new-entry-header {
-     flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
+  }
+  
+  .header-actions {
+      width: 100%;
+      justify-content: space-between;
+  }
+  
+  .mood-chips-wrap, .prebuilt-tags {
+      gap: 6px;
+  }
+  
+  .custom-tag-input {
+      flex-direction: column;
+      align-items: stretch;
 
-    .header-actions {
- width: 100%;
-        justify-content: space-between;
-    }
+  }
 
-    .mood-chips-wrap, .prebuilt-tags {
-gap: 6px;
-    }
-
-    .custom-tag-input {
-        flex-direction: column;
-        align-items: stretch;
-    }
 }

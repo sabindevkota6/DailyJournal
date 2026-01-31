@@ -95,7 +95,7 @@
 }
 
 ::deep a.nav-link-item.active {
- background-color: rgba(160, 130, 109, 0.15);
+    background-color: rgba(160, 130, 109, 0.15);
     color: var(--mud-palette-primary);
 }
 

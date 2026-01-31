@@ -7,286 +7,313 @@
 
 <PageTitle>Calendar - Daily Journal</PageTitle>
 
+<!-- calendar page container -->
 <div class="calendar-container">
-    <div class="calendar-header">
- <MudText Typo="Typo.h4" Class="calendar-title">Calendar</MudText>
-    <MudText Typo="Typo.body2" Class="calendar-subtitle">View your journal entries by date</MudText>
-    </div>
+	<!-- page header -->
+	<div class="calendar-header">
+		<MudText Typo="Typo.h4" Class="calendar-title">Calendar</MudText>
+		<MudText Typo="Typo.body2" Class="calendar-subtitle">View your journal entries by date</MudText>
+	</div>
 
-    @if (isLoading)
- {
-        <div class="loading-section">
-   <MudProgressCircular Color="MudColor.Primary" Indeterminate="true" />
-    <MudText Typo="Typo.body1" Class="mt-3">Loading entries...</MudText>
-        </div>
-    }
-    else
-    {
-        <!-- Month Navigation -->
-    <MudPaper Class="month-selector" Elevation="1">
-  <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" 
-        Color="MudColor.Primary" 
- OnClick="PreviousMonth" />
- 
-      <MudText Typo="Typo.h6">@currentMonth.ToString("MMMM yyyy")</MudText>
-    
-      <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" 
-   Color="MudColor.Primary" 
-OnClick="NextMonth"
-   Disabled="@(currentMonth.Month == DateTime.Now.Month && currentMonth.Year == DateTime.Now.Year)" />
-   </MudPaper>
+	@if (isLoading)
+	{
+		<!-- loading indicator -->
+		<div class="loading-section">
+			<MudProgressCircular Color="MudColor.Primary" Indeterminate="true" />
+			<MudText Typo="Typo.body1" Class="mt-3">Loading entries...</MudText>
+		</div>
+	}
+	else
+	{
+		<!-- month navigation -->
+		<MudPaper Class="month-selector" Elevation="1">
+			<MudIconButton Icon="@Icons.Material.Filled.ChevronLeft"
+						   Color="MudColor.Primary"
+						   OnClick="PreviousMonth" />
 
-   <!-- Calendar Grid -->
- <MudPaper Class="calendar-grid" Elevation="1">
-  <!-- Day Headers -->
-  <div class="calendar-days-header">
-      <div class="day-header">Sun</div>
-     <div class="day-header">Mon</div>
-  <div class="day-header">Tue</div>
-    <div class="day-header">Wed</div>
-      <div class="day-header">Thu</div>
-     <div class="day-header">Fri</div>
-    <div class="day-header">Sat</div>
-      </div>
+			<MudText Typo="Typo.h6">@currentMonth.ToString("MMMM yyyy")</MudText>
 
-    <!-- Calendar Days -->
-      <div class="calendar-days">
-    @foreach (var day in GetCalendarDays())
- {
-       var dayClass = GetDayClass(day);
-   var hasEntry = entriesByDate.ContainsKey(day.Date);
- var isToday = day.Date == DateTime.Now.Date; // Use local date
-   
-       <div class="@dayClass" @onclick="() => OnDayClick(day)">
-     <div class="day-number @(isToday ? "today" : "")">@day.Day</div>
-  
-    @if (hasEntry)
-      {
- var entry = entriesByDate[day.Date];
-    <div class="day-emoji" title="@entry.PrimaryMood.ToString()">
-   <MudIcon Icon="@GetMoodIcon(entry.PrimaryMood)" Size="MudSize.Medium" Color="@GetMoodIconColor(entry.PrimaryMood)" />
-    </div>
-      }
-                else if (day.Month == currentMonth.Month && day.Date <= DateTime.Now.Date)
-       {
-           <div class="day-emoji" title="No Entry">
-   <MudIcon Icon="@Icons.Material.Filled.Close" Size="MudSize.Medium" Color="MudColor.Default" />
-     </div>
-        }
-  </div>
-  }
-    </div>
-        </MudPaper>
+			<MudIconButton Icon="@Icons.Material.Filled.ChevronRight"
+						   Color="MudColor.Primary"
+						   OnClick="NextMonth"
+						   Disabled="@(currentMonth.Month == DateTime.Now.Month && currentMonth.Year == DateTime.Now.Year)" />
+		</MudPaper>
 
-<!-- Mood Legend -->
-        <MudPaper Class="mood-legend" Elevation="1">
-     <MudText Typo="Typo.subtitle2" Class="legend-title">Mood Legend:</MudText>
-      <div class="legend-items">
-        <div class="legend-item">
-<MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Color="MudColor.Success" Size="MudSize.Medium" />
-  <MudText Typo="Typo.body2">Positive</MudText>
-     </div>
- <div class="legend-item">
-<MudIcon Icon="@Icons.Material.Filled.SentimentNeutral" Color="MudColor.Default" Size="MudSize.Medium" />
-   <MudText Typo="Typo.body2">Neutral</MudText>
-    </div>
-      <div class="legend-item">
-   <MudIcon Icon="@Icons.Material.Filled.SentimentDissatisfied" Color="MudColor.Error" Size="MudSize.Medium" />
-       <MudText Typo="Typo.body2">Negative</MudText>
-       </div>
-  <div class="legend-item">
-    <MudIcon Icon="@Icons.Material.Filled.Close" Color="MudColor.Default" Size="MudSize.Medium" />
-    <MudText Typo="Typo.body2">No Entry</MudText>
-</div>
-   </div>
-        </MudPaper>
+		<!-- calendar grid -->
+		<MudPaper Class="calendar-grid" Elevation="1">
+			<!-- day headers -->
+			<div class="calendar-days-header">
+				<div class="day-header">Sun</div>
+				<div class="day-header">Mon</div>
+				<div class="day-header">Tue</div>
+				<div class="day-header">Wed</div>
+				<div class="day-header">Thu</div>
+				<div class="day-header">Fri</div>
+				<div class="day-header">Sat</div>
+			</div>
 
- <!-- Selected Day Entries -->
-     @if (selectedDate.HasValue)
-      {
-   <MudPaper Class="selected-day-section" Elevation="1">
- @if (entriesByDate.ContainsKey(selectedDate.Value))
-     {
- var entry = entriesByDate[selectedDate.Value];
-         var moodCategory = GetMoodCategory(entry.PrimaryMood);
-<div class="entry-preview">
-             <div class="entry-header-row">
- <MudText Typo="Typo.h6" Class="entry-title">@entry.Title</MudText>
-  <MudButton Variant="Variant.Filled" 
-  Class="view-entry-button" 
-    Size="MudSize.Small"
-  StartIcon="@Icons.Material.Filled.Visibility"
-    OnClick="@(() => ViewEntry(entry))">
-View Entry
- </MudButton>
-     </div>
-  <MudText Typo="Typo.caption" Class="entry-date">@selectedDate.Value.ToString("MMMM dd, yyyy")</MudText>
-<div class="entry-meta-row">
-    <span class="meta-label">Moods:</span>
-    <span class="mood-chip @GetMoodCategoryClass(moodCategory)">@moodCategory (Primary)</span>
-    <span class="mood-chip mood-chip-secondary">@entry.PrimaryMood</span>
-    @foreach (var mood in entry.SecondaryMoods)
-    {
-     <span class="mood-chip mood-chip-secondary">@mood</span>
-    }
-   </div>
-   @if (entry.Tags.Any())
- {
-        <div class="entry-meta-row">
-  <span class="meta-label">Tags:</span>
-    <span class="tags-inline">
-@foreach (var tag in entry.Tags)
-   {
-          <span class="tag-chip-inline">@tag</span>
-    }
- </span>
-           </div>
-    }
-    </div>
-}
-    else
-     {
-   <MudText Typo="Typo.body2" Class="no-entry-text">
-  No entry for this day.
-   </MudText>
-  }
-      </MudPaper>
-     }
-    }
+			<!-- calendar days grid -->
+			<div class="calendar-days">
+				@foreach (var day in GetCalendarDays())
+				{
+					var dayClass = GetDayClass(day);
+					var hasEntry = entriesByDate.ContainsKey(day.Date);
+					var isToday = day.Date == DateTime.Now.Date;
+
+					<div class="@dayClass" @onclick="() => OnDayClick(day)">
+						<div class="day-number @(isToday ? "today" : "")">@day.Day</div>
+
+						@if (hasEntry)
+						{
+							var entry = entriesByDate[day.Date];
+							<div class="day-emoji" title="@entry.PrimaryMood.ToString()">
+								<MudIcon Icon="@GetMoodIcon(entry.PrimaryMood)" Size="MudSize.Medium" Color="@GetMoodIconColor(entry.PrimaryMood)" />
+							</div>
+						}
+						else if (day.Month == currentMonth.Month && day.Date <= DateTime.Now.Date)
+						{
+							<div class="day-emoji" title="No Entry">
+								<MudIcon Icon="@Icons.Material.Filled.Close" Size="MudSize.Medium" Color="MudColor.Default" />
+							</div>
+						}
+					</div>
+				}
+			</div>
+		</MudPaper>
+
+		<!-- mood legend -->
+		<MudPaper Class="mood-legend" Elevation="1">
+			<MudText Typo="Typo.subtitle2" Class="legend-title">Mood Legend:</MudText>
+			<div class="legend-items">
+				<div class="legend-item">
+					<MudIcon Icon="@Icons.Material.Filled.SentimentSatisfied" Color="MudColor.Success" Size="MudSize.Medium" />
+					<MudText Typo="Typo.body2">Positive</MudText>
+				</div>
+				<div class="legend-item">
+					<MudIcon Icon="@Icons.Material.Filled.SentimentNeutral" Color="MudColor.Default" Size="MudSize.Medium" />
+					<MudText Typo="Typo.body2">Neutral</MudText>
+				</div>
+				<div class="legend-item">
+					<MudIcon Icon="@Icons.Material.Filled.SentimentDissatisfied" Color="MudColor.Error" Size="MudSize.Medium" />
+					<MudText Typo="Typo.body2">Negative</MudText>
+				</div>
+				<div class="legend-item">
+					<MudIcon Icon="@Icons.Material.Filled.Close" Color="MudColor.Default" Size="MudSize.Medium" />
+					<MudText Typo="Typo.body2">No Entry</MudText>
+				</div>
+			</div>
+		</MudPaper>
+
+		<!-- selected day entry preview -->
+		@if (selectedDate.HasValue)
+		{
+			<MudPaper Class="selected-day-section" Elevation="1">
+				@if (entriesByDate.ContainsKey(selectedDate.Value))
+				{
+					var entry = entriesByDate[selectedDate.Value];
+					var moodCategory = GetMoodCategory(entry.PrimaryMood);
+					<div class="entry-preview">
+						<div class="entry-header-row">
+							<MudText Typo="Typo.h6" Class="entry-title">@entry.Title</MudText>
+							<MudButton Variant="Variant.Filled"
+									   Class="view-entry-button"
+									   Size="MudSize.Small"
+									   StartIcon="@Icons.Material.Filled.Visibility"
+									   OnClick="@(() => ViewEntry(entry))">
+								View Entry
+							</MudButton>
+						</div>
+						<MudText Typo="Typo.caption" Class="entry-date">@selectedDate.Value.ToString("MMMM dd, yyyy")</MudText>
+						<div class="entry-meta-row">
+							<span class="meta-label">Moods:</span>
+							<span class="mood-chip @GetMoodCategoryClass(moodCategory)">@moodCategory (Primary)</span>
+							<span class="mood-chip mood-chip-secondary">@entry.PrimaryMood</span>
+							@foreach (var mood in entry.SecondaryMoods)
+							{
+								<span class="mood-chip mood-chip-secondary">@mood</span>
+							}
+						</div>
+						@if (entry.Tags.Any())
+						{
+							<div class="entry-meta-row">
+								<span class="meta-label">Tags:</span>
+								<span class="tags-inline">
+									@foreach (var tag in entry.Tags)
+									{
+										<span class="tag-chip-inline">@tag</span>
+									}
+								</span>
+							</div>
+						}
+					</div>
+				}
+				else
+				{
+					<MudText Typo="Typo.body2" Class="no-entry-text">
+						No entry for this day.
+					</MudText>
+				}
+			</MudPaper>
+		}
+	}
 </div>
 
 @code {
-    private List<JournalEntry> allEntries = new();
-    private Dictionary<DateTime, JournalEntry> entriesByDate = new();
-    private DateTime currentMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
-    private DateTime? selectedDate;
-    private bool isLoading = true;
+	// list of all journal entries
+	private List<JournalEntry> allEntries = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadEntries();
-    }
+	// dictionary mapping dates to entries for quick lookup
+	private Dictionary<DateTime, JournalEntry> entriesByDate = new();
 
-    private async Task LoadEntries()
-    {
-        try
-    {
-         isLoading = true;
-   allEntries = await JournalService.SearchAsync();
-      
-     entriesByDate = allEntries
-    .GroupBy(e => e.Date.Date)
-     .ToDictionary(g => g.Key, g => g.First());
-        }
-        catch (Exception ex)
-     {
-      Snackbar.Add($"Error loading entries: {ex.Message}", Severity.Error);
-            System.Diagnostics.Debug.WriteLine(ex);
-        }
-        finally
-        {
-            isLoading = false;
-    }
-    }
+	// current month being displayed
+	private DateTime currentMonth = new(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-    private string GetMoodIcon(Mood mood)
-    {
-        return mood switch
-        {
-            Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => Icons.Material.Filled.SentimentSatisfied,
-   Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => Icons.Material.Filled.SentimentNeutral,
-      Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => Icons.Material.Filled.SentimentDissatisfied,
-    _ => Icons.Material.Filled.SentimentNeutral
-  };
-    }
+	// currently selected date
+	private DateTime? selectedDate;
 
-    private MudColor GetMoodIconColor(Mood mood)
-    {
-        return mood switch
- {
-     Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => MudColor.Success,
-            Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => MudColor.Default,
-            Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => MudColor.Error,
-            _ => MudColor.Default
-        };
-    }
+	// loading state
+	private bool isLoading = true;
 
-    private List<DateTime> GetCalendarDays()
-    {
-        var firstDay = new DateTime(currentMonth.Year, currentMonth.Month, 1);
-        var lastDay = firstDay.AddMonths(1).AddDays(-1);
-   
-   var startDate = firstDay.AddDays(-(int)firstDay.DayOfWeek);
-        var endDate = lastDay.AddDays(6 - (int)lastDay.DayOfWeek);
-        
-   var days = new List<DateTime>();
-        for (var date = startDate; date <= endDate; date = date.AddDays(1))
-        {
-            days.Add(date);
-        }
-    
-        return days;
-    }
+	// loading entries when page initializes
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadEntries();
+	}
 
-    private string GetDayClass(DateTime day)
-    {
-      var baseClass = "calendar-day";
+	// loading all journal entries
+	private async Task LoadEntries()
+	{
+		try
+		{
+			isLoading = true;
+			allEntries = await JournalService.SearchAsync();
 
-        if (day.Month != currentMonth.Month)
-        baseClass += " other-month";
-        
-        if (day.Date == selectedDate?.Date)
-            baseClass += " selected";
-        
-   if (entriesByDate.ContainsKey(day.Date))
-            baseClass += " has-entry";
-        
-        return baseClass;
-    }
+			// grouping entries by date for quick lookup
+			entriesByDate = allEntries
+		 .GroupBy(e => e.Date.Date)
+			.ToDictionary(g => g.Key, g => g.First());
+		}
+		catch (Exception ex)
+		{
+			Snackbar.Add($"Error loading entries: {ex.Message}", Severity.Error);
+			System.Diagnostics.Debug.WriteLine(ex);
+		}
+		finally
+		{
+			isLoading = false;
+		}
+	}
 
-    private string GetMoodCategory(Mood mood)
-    {
-        return mood switch
-        {
-  Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "Positive",
-       Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "Negative",
-            _ => "Neutral"
- };
-    }
+	// getting the mood icon based on mood type
+	private string GetMoodIcon(Mood mood)
+	{
+		return mood switch
+		{
+			Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => Icons.Material.Filled.SentimentSatisfied,
+			Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => Icons.Material.Filled.SentimentNeutral,
+			Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => Icons.Material.Filled.SentimentDissatisfied,
+			_ => Icons.Material.Filled.SentimentNeutral
+		};
+	}
 
-    private string GetMoodCategoryClass(string category)
-    {
-        return category.ToLower() switch
-    {
-    "positive" => "mood-chip-positive",
-            "negative" => "mood-chip-negative",
-    _ => "mood-chip-neutral"
-        };
-    }
+	// getting the mood icon color based on mood type
+	private MudColor GetMoodIconColor(Mood mood)
+	{
+		return mood switch
+		{
+			Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => MudColor.Success,
+			Mood.Calm or Mood.Thoughtful or Mood.Curious or Mood.Nostalgic or Mood.Bored => MudColor.Default,
+			Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => MudColor.Error,
+			_ => MudColor.Default
+		};
+	}
 
-    private void PreviousMonth()
-    {
-        currentMonth = currentMonth.AddMonths(-1);
-        selectedDate = null;
-  }
+	// generating list of days to display in calendar grid
+	private List<DateTime> GetCalendarDays()
+	{
+		var firstDay = new DateTime(currentMonth.Year, currentMonth.Month, 1);
+		var lastDay = firstDay.AddMonths(1).AddDays(-1);
 
-    private void NextMonth()
-    {
-        var today = DateTime.Now.Date;
-        if (currentMonth.Month == today.Month && currentMonth.Year == today.Year)
-            return;
-        
-currentMonth = currentMonth.AddMonths(1);
-        selectedDate = null;
-    }
+		// getting start date (Sunday of first week)
+		var startDate = firstDay.AddDays(-(int)firstDay.DayOfWeek);
+		// getting end date (Saturday of last week)
+		var endDate = lastDay.AddDays(6 - (int)lastDay.DayOfWeek);
 
-    private void OnDayClick(DateTime day)
-    {
-        selectedDate = day.Date;
-    }
+		var days = new List<DateTime>();
+		for (var date = startDate; date <= endDate; date = date.AddDays(1))
+		{
+			days.Add(date);
+		}
 
-    private void ViewEntry(JournalEntry entry)
-    {
-        Nav.NavigateTo($"/entry-view/{entry.Id}");
-    }
+		return days;
+	}
+
+	// getting CSS class for a calendar day
+	private string GetDayClass(DateTime day)
+	{
+		var baseClass = "calendar-day";
+
+		if (day.Month != currentMonth.Month)
+			baseClass += " other-month";
+
+		if (day.Date == selectedDate?.Date)
+			baseClass += " selected";
+
+		if (entriesByDate.ContainsKey(day.Date))
+			baseClass += " has-entry";
+
+		return baseClass;
+	}
+
+	// getting mood category string from mood
+	private string GetMoodCategory(Mood mood)
+	{
+		return mood switch
+		{
+			Mood.Happy or Mood.Excited or Mood.Grateful or Mood.Relaxed or Mood.Confident => "Positive",
+			Mood.Sad or Mood.Anxious or Mood.Stressed or Mood.Angry or Mood.Lonely => "Negative",
+			_ => "Neutral"
+		};
+	}
+
+	// getting CSS class for mood category chip
+	private string GetMoodCategoryClass(string category)
+	{
+		return category.ToLower() switch
+		{
+			"positive" => "mood-chip-positive",
+			"negative" => "mood-chip-negative",
+			_ => "mood-chip-neutral"
+		};
+	}
+
+	// navigating to previous month
+	private void PreviousMonth()
+	{
+		currentMonth = currentMonth.AddMonths(-1);
+		selectedDate = null;
+	}
+
+	// navigating to next month
+	private void NextMonth()
+	{
+		var today = DateTime.Now.Date;
+		if (currentMonth.Month == today.Month && currentMonth.Year == today.Year)
+			return;
+
+		currentMonth = currentMonth.AddMonths(1);
+		selectedDate = null;
+	}
+
+	// handling day click event
+	private void OnDayClick(DateTime day)
+	{
+		selectedDate = day.Date;
+	}
+
+	// navigating to entry view page
+	private void ViewEntry(JournalEntry entry)
+	{
+		Nav.NavigateTo($"/entry-view/{entry.Id}");
+	}
 }

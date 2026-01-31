@@ -1,22 +1,22 @@
 using DailyJournal.Core.Services;
 using DailyJournal.Data.Models;
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DailyJournal.Data.Services
 {
+    // service class for managing journal entries
     public class JournalService : IJournalService
     {
+        // database service dependency
         private readonly IDatabaseService _databaseService;
 
+        // constructor injecting the database service
         public JournalService(IDatabaseService databaseService)
         {
             _databaseService = databaseService;
         }
 
+        // ensuring the JournalEntry table exists in the database
         private async Task InitializeTableAsync()
         {
             try
@@ -30,9 +30,10 @@ namespace DailyJournal.Data.Services
             }
         }
 
-        // Changed: Keep dates as local dates instead of converting to UTC
+        // normalizing a date to midnight (removing time component)
         private static DateTime NormalizeDate(DateTime date) => date.Date;
 
+        // getting a journal entry by its unique ID
         public async Task<JournalEntry?> GetEntryByIdAsync(Guid id)
         {
             try
@@ -49,6 +50,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
+        // getting a journal entry by its date
         public async Task<JournalEntry?> GetEntryByDateAsync(DateTime date)
         {
             try
@@ -66,6 +68,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
+        // creating a new journal entry
         public async Task<JournalEntry> CreateEntryAsync(
             DateTime date,
             string title,
@@ -81,27 +84,31 @@ namespace DailyJournal.Data.Services
                 await InitializeTableAsync();
 
                 var d = NormalizeDate(date);
-                var now = DateTime.Now; // Changed from DateTime.UtcNow to local time
+                var now = DateTime.Now;
 
                 System.Diagnostics.Debug.WriteLine($"Creating entry for date: {d:yyyy-MM-dd} (Local: {DateTime.Now:yyyy-MM-dd HH:mm:ss})");
 
+                // checking if entry already exists for this date
                 var existing = await GetEntryByDateAsync(d);
                 if (existing != null)
                 {
                     throw new InvalidOperationException($"An entry already exists for date {d:yyyy-MM-dd}.");
                 }
 
+                // processing secondary moods and limiting to 2 unique moods
                 var secondary = (secondaryMoods ?? Enumerable.Empty<Mood>())
                     .Distinct()
                     .Take(2)
                     .ToList();
 
+                // normalizing tags by trimming whitespace and removing duplicates
                 var normalizedTags = (tags ?? Enumerable.Empty<string>())
                     .Where(t => !string.IsNullOrWhiteSpace(t))
                     .Select(t => t.Trim())
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
 
+                // creating the entry object
                 var entry = new JournalEntry
                 {
                     Date = d,
@@ -131,6 +138,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
+        // updating an existing journal entry by ID
         public async Task<JournalEntry> UpdateEntryAsync(
             Guid id,
             string title,
@@ -145,27 +153,31 @@ namespace DailyJournal.Data.Services
             {
                 await InitializeTableAsync();
 
+                // finding the existing entry
                 var existing = await GetEntryByIdAsync(id);
                 if (existing == null)
                 {
                     throw new KeyNotFoundException($"Journal entry with id '{id}' was not found.");
                 }
 
-                var now = DateTime.Now; // Changed from DateTime.UtcNow to local time
+                var now = DateTime.Now;
 
                 System.Diagnostics.Debug.WriteLine($"Updating entry {id} (Date: {existing.Date:yyyy-MM-dd})");
 
+                // processing secondary moods and limiting to 2 unique moods
                 var secondary = (secondaryMoods ?? Enumerable.Empty<Mood>())
                     .Distinct()
                     .Take(2)
                     .ToList();
 
+                // normalizing tags by trimming whitespace and removing duplicates
                 var normalizedTags = (tags ?? Enumerable.Empty<string>())
                     .Where(t => !string.IsNullOrWhiteSpace(t))
                     .Select(t => t.Trim())
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToList();
 
+                // updating the entry fields
                 existing.Title = title ?? string.Empty;
                 existing.Content = content ?? string.Empty;
                 existing.IsMarkdown = isMarkdown;
@@ -190,7 +202,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
-        // Backward compat wrapper.
+        // creating a new entry or updating existing one for backward compatibility
         public async Task<JournalEntry> CreateOrUpdateEntryAsync(
             DateTime date,
             string title,
@@ -216,7 +228,7 @@ namespace DailyJournal.Data.Services
                     }
                     catch (SQLiteException)
                     {
-                        // Unique Date index might race; fall back to update.
+                        // handling race condition with unique date index
                         var again = await GetEntryByDateAsync(d);
                         if (again == null) throw;
 
@@ -233,6 +245,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
+        // deleting an entry by date
         public async Task<bool> DeleteEntryAsync(DateTime date)
         {
             try
@@ -252,6 +265,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
+        // deleting an entry by its ID
         public async Task<bool> DeleteEntryByIdAsync(Guid id)
         {
             try
@@ -270,6 +284,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
+        // searching entries with optional filters
         public async Task<List<JournalEntry>> SearchAsync(
             string? query = null,
             DateTime? start = null,
@@ -281,35 +296,41 @@ namespace DailyJournal.Data.Services
             {
                 await InitializeTableAsync();
 
+                // getting all entries first since SQLite net does not support complex queries
                 var list = await _databaseService.Connection.Table<JournalEntry>().ToListAsync();
                 var q = list.AsEnumerable();
 
+                // filtering by search query in title or content
                 if (!string.IsNullOrWhiteSpace(query))
                 {
                     var needle = query.Trim();
-                    q = q.Where(e => 
+                    q = q.Where(e =>
                         (e.Title ?? string.Empty).Contains(needle, StringComparison.OrdinalIgnoreCase) ||
                         (e.Content ?? string.Empty).Contains(needle, StringComparison.OrdinalIgnoreCase));
                 }
 
+                // filtering by start date
                 if (start.HasValue)
                 {
                     var s = NormalizeDate(start.Value);
                     q = q.Where(e => e.Date >= s);
                 }
 
+                // filtering by end date
                 if (end.HasValue)
                 {
                     var e = NormalizeDate(end.Value);
                     q = q.Where(x => x.Date <= e);
                 }
 
+                // filtering by moods (primary or secondary)
                 var moodSet = (moods ?? Enumerable.Empty<Mood>()).Distinct().ToHashSet();
                 if (moodSet.Count > 0)
                 {
                     q = q.Where(e => moodSet.Contains(e.PrimaryMood) || e.SecondaryMoods.Any(moodSet.Contains));
                 }
 
+                // filtering by tags
                 var tagSet = (tags ?? Enumerable.Empty<string>())
                     .Where(t => !string.IsNullOrWhiteSpace(t))
                     .Select(t => t.Trim())
@@ -320,6 +341,7 @@ namespace DailyJournal.Data.Services
                     q = q.Where(e => e.Tags.Any(tagSet.Contains));
                 }
 
+                // returning results sorted by date descending
                 return q.OrderByDescending(e => e.Date).ToList();
             }
             catch (Exception ex)
@@ -329,6 +351,7 @@ namespace DailyJournal.Data.Services
             }
         }
 
+        // calculating the current journaling streak in days
         public async Task<int> GetCurrentStreakAsync()
         {
             try
@@ -341,20 +364,22 @@ namespace DailyJournal.Data.Services
 
                 if (entries.Count == 0) return 0;
 
+                // getting unique dates sorted descending
                 var dates = entries
                     .Select(e => e.Date.Date)
                     .Distinct()
                     .OrderByDescending(d => d)
                     .ToList();
 
-                var today = DateTime.Now.Date; 
+                var today = DateTime.Now.Date;
 
-                // streak ends at today if present, otherwise yesterday if present
+                // streak starts from today if entry exists or yesterday if that has entry
                 DateTime? anchor = dates.FirstOrDefault() == today ? today
                     : (dates.FirstOrDefault() == today.AddDays(-1) ? today.AddDays(-1) : null);
 
                 if (anchor is null) return 0;
 
+                // counting consecutive days going backwards
                 var streak = 0;
                 while (dates.Contains(anchor.Value.AddDays(-streak)))
                     streak++;

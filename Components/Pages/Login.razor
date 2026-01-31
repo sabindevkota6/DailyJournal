@@ -8,183 +8,201 @@
 @using DailyJournal.Core.Services
 @implements IDisposable
 
+<!-- theme and popup providers for this page -->
 <MudThemeProvider Theme="@_theme" IsDarkMode="@ThemeService.IsDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<!-- login page container -->
 <div class="login-container @(ThemeService.IsDarkMode ? "dark-mode" : "light-mode")">
-    <div class="login-card">
-        <!-- Lock Icon with Circle Background -->
-        <div class="lock-icon-wrapper">
-      <div class="lock-icon-circle">
-       <MudIcon Icon="@Icons.Material.Outlined.Lock" Size="MudSize.Large" />
-         </div>
-    </div>
+	<div class="login-card">
+		<!-- lock icon with circle background -->
+		<div class="lock-icon-wrapper">
+			<div class="lock-icon-circle">
+				<MudIcon Icon="@Icons.Material.Outlined.Lock" Size="MudSize.Large" />
+			</div>
+		</div>
 
-        <!-- Title -->
-        <div class="login-title">Daily Journal</div>
+		<!-- title -->
+		<div class="login-title">Daily Journal</div>
 
-        <!-- Subtitle -->
-        <div class="login-subtitle">Your personal space for reflection</div>
+		<!-- subtitle -->
+		<div class="login-subtitle">Your personal space for reflection</div>
 
-        <!-- PIN Input Field -->
-        <div class="pin-input-wrapper">
-   <MudTextField @bind-Value="pinInput"
-     InputType="pinInputType"
-     Placeholder="Enter 4-digit PIN"
-    MaxLength="4"
- Variant="Variant.Outlined"
-    Adornment="Adornment.End"
-  AdornmentIcon="@eyeIcon"
-         OnAdornmentClick="TogglePinVisibility" />
-        </div>
+		<!-- PIN input field -->
+		<div class="pin-input-wrapper">
+			<MudTextField @bind-Value="pinInput"
+						  InputType="pinInputType"
+						  Placeholder="Enter 4-digit PIN"
+						  MaxLength="4"
+						  Variant="Variant.Outlined"
+						  Adornment="Adornment.End"
+						  AdornmentIcon="@eyeIcon"
+						  OnAdornmentClick="TogglePinVisibility" />
+		</div>
 
-        <div class="error-message">
-            @errorMessage
-     </div>
+		<!-- error message display -->
+		<div class="error-message">
+			@errorMessage
+		</div>
 
-        <MudButton Variant="Variant.Filled"
-        FullWidth="true"
-       Class="unlock-button"
-      OnClick="Submit">
-     @buttonText
-        </MudButton>
+		<!-- submit button -->
+		<MudButton Variant="Variant.Filled"
+				   FullWidth="true"
+				   Class="unlock-button"
+				   OnClick="Submit">
+			@buttonText
+		</MudButton>
 
-        @if (hasPin && failedAttempts > 0)
-  {
-      <div class="failed-attempts">
-                Failed attempts: @failedAttempts
-          </div>
-    }
-    </div>
+		<!-- failed attempts counter -->
+		@if (hasPin && failedAttempts > 0)
+		{
+			<div class="failed-attempts">
+				Failed attempts: @failedAttempts
+			</div>
+		}
+	</div>
 </div>
 
 @code {
-    private readonly MudTheme _theme = new()
-{
-        PaletteLight = new PaletteLight()
- {
-      Primary = "#A0826D",
-    PrimaryDarken = "#8B7058",
-            PrimaryLighten = "#C4A68D",
-       Secondary = "#9b7b63",
- Background = "#FFFBEB",
-     Surface = "#FFFFFF",
-     TextPrimary = "#424242",
-      TextSecondary = "#666666",
-        },
-   PaletteDark = new PaletteDark()
-        {
-        Primary = "#F44336",
-    PrimaryDarken = "#D32F2F",
-      PrimaryLighten = "#EF5350",
-        Secondary = "#E53935",
-            Background = "#121212",
-     Surface = "#1E1E1E",
-    TextPrimary = "#FFFFFF",
-            TextSecondary = "#B0B0B0",
-    }
-    };
+	// theme definition for the login page
+	private readonly MudTheme _theme = new()
+	{
+		PaletteLight = new PaletteLight()
+		{
+			Primary = "#A0826D",
+			PrimaryDarken = "#8B7058",
+			PrimaryLighten = "#C4A68D",
+			Secondary = "#9b7b63",
+			Background = "#FFFBEB",
+			Surface = "#FFFFFF",
+			TextPrimary = "#424242",
+			TextSecondary = "#666666",
+		},
+		PaletteDark = new PaletteDark()
+		{
+			Primary = "#F44336",
+			PrimaryDarken = "#D32F2F",
+			PrimaryLighten = "#EF5350",
+			Secondary = "#E53935",
+			Background = "#121212",
+			Surface = "#1E1E1E",
+			TextPrimary = "#FFFFFF",
+			TextSecondary = "#B0B0B0",
+		}
+	};
 
-    private string pinInput = "";
-    private string errorMessage = "";
-    private int failedAttempts = 0;
-    private bool hasPin;
-    private bool showPin = false;
+	// form fields and state variables
+	private string pinInput = "";
+	private string errorMessage = "";
+	private int failedAttempts = 0;
+	private bool hasPin;
+	private bool showPin = false;
 
-    private InputType pinInputType => showPin ? InputType.Text : InputType.Password;
- private string eyeIcon => showPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
-    private string buttonText => hasPin ? "Unlock Journal" : "Set PIN";
+	// computed properties for input display
+	private InputType pinInputType => showPin ? InputType.Text : InputType.Password;
+	private string eyeIcon => showPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+	private string buttonText => hasPin ? "Unlock Journal" : "Set PIN";
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            hasPin = await UserService.HasPinAsync();
-  ThemeService.Changed += OnThemeChanged;
-            CheckForLogoutSuccess();
-      }
-        catch (Exception ex)
-        {
-  errorMessage = "Error loading PIN system";
-            System.Diagnostics.Debug.WriteLine(ex);
-        }
-    }
+	// initializing the page and checking if PIN exists
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			hasPin = await UserService.HasPinAsync();
+			ThemeService.Changed += OnThemeChanged;
+			CheckForLogoutSuccess();
+		}
+		catch (Exception ex)
+		{
+			errorMessage = "Error loading PIN system";
+			System.Diagnostics.Debug.WriteLine(ex);
+		}
+	}
 
-    private void OnThemeChanged() => InvokeAsync(StateHasChanged);
+	// handling theme change events
+	private void OnThemeChanged() => InvokeAsync(StateHasChanged);
 
-  private void CheckForLogoutSuccess()
-  {
-        try
-      {
-            var uri = new Uri(Nav.Uri);
-       var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-         var loggedOut = query["loggedOut"];
+	// checking if user just logged out and showing message
+	private void CheckForLogoutSuccess()
+	{
+		try
+		{
+			var uri = new Uri(Nav.Uri);
+			var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+			var loggedOut = query["loggedOut"];
 
-            if (loggedOut == "true")
-            {
-                Snackbar.Add("Logged out successfully", Severity.Success);
-           System.Diagnostics.Debug.WriteLine("Showing logout success message on Login page");
+			if (loggedOut == "true")
+			{
+				Snackbar.Add("Logged out successfully", Severity.Success);
+				System.Diagnostics.Debug.WriteLine("Showing logout success message on Login page");
 
-       Nav.NavigateTo("/login", replace: true);
-    }
-   }
-        catch (Exception ex)
-    {
-     System.Diagnostics.Debug.WriteLine($"Error checking logout parameter: {ex.Message}");
-  }
-    }
+				Nav.NavigateTo("/login", replace: true);
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error checking logout parameter: {ex.Message}");
+		}
+	}
 
-    private void TogglePinVisibility() => showPin = !showPin;
+	// toggling PIN visibility
+	private void TogglePinVisibility() => showPin = !showPin;
 
-    private async Task Submit()
-    {
-        errorMessage = "";
+	// submitting the PIN form
+	private async Task Submit()
+	{
+		errorMessage = "";
 
-   if (pinInput.Length != 4)
-        {
-   errorMessage = "PIN must be 4 digits.";
-       Snackbar.Add("PIN must be 4 digits.", Severity.Error);
-return;
-        }
+		// validating PIN length
+		if (pinInput.Length != 4)
+		{
+			errorMessage = "PIN must be 4 digits.";
+			Snackbar.Add("PIN must be 4 digits.", Severity.Error);
+			return;
+		}
 
-        if (!int.TryParse(pinInput, out int pin))
-        {
-     errorMessage = "Non-numeric characters are not allowed.";
-  Snackbar.Add("Non-numeric characters are not allowed. PIN must be 4 digits.", Severity.Error);
-   return;
-        }
+		// validating PIN contains only numbers
+		if (!int.TryParse(pinInput, out int pin))
+		{
+			errorMessage = "Non-numeric characters are not allowed.";
+			Snackbar.Add("Non-numeric characters are not allowed. PIN must be 4 digits.", Severity.Error);
+			return;
+		}
 
-   if (!hasPin)
-        {
-    await UserService.CreatePinAsync(pin);
-  hasPin = true;
-Snackbar.Add("PIN created successfully! Welcome to Daily Journal.", Severity.Success);
-     await Task.Delay(500);
- Nav.NavigateTo("/new-entry?fromLogin=true&isNewPin=true", forceLoad: true);
-     return;
-    }
+		// if no PIN exists, creating new one
+		if (!hasPin)
+		{
+			await UserService.CreatePinAsync(pin);
+			hasPin = true;
+			Snackbar.Add("PIN created successfully! Welcome to Daily Journal.", Severity.Success);
+			await Task.Delay(500);
+			Nav.NavigateTo("/new-entry?fromLogin=true&isNewPin=true", forceLoad: true);
+			return;
+		}
 
-        var valid = await UserService.ValidatePinAsync(pin);
+		// validating existing PIN
+		var valid = await UserService.ValidatePinAsync(pin);
 
-        if (valid)
-        {
-      Snackbar.Add("Welcome back! Login successful.", Severity.Success);
-      await Task.Delay(500);
-          Nav.NavigateTo("/new-entry?fromLogin=true", forceLoad: true);
-        }
-        else
-        {
-  failedAttempts++;
-  errorMessage = "Incorrect PIN. Please try again.";
-  pinInput = "";
-      Snackbar.Add("Invalid PIN. Please try again.", Severity.Error);
-        }
-  }
+		if (valid)
+		{
+			Snackbar.Add("Welcome back! Login successful.", Severity.Success);
+			await Task.Delay(500);
+			Nav.NavigateTo("/new-entry?fromLogin=true", forceLoad: true);
+		}
+		else
+		{
+			failedAttempts++;
+			errorMessage = "Incorrect PIN. Please try again.";
+			pinInput = "";
+			Snackbar.Add("Invalid PIN. Please try again.", Severity.Error);
+		}
+	}
 
-    public void Dispose()
-    {
-        ThemeService.Changed -= OnThemeChanged;
-    }
+	// cleaning up event subscription
+	public void Dispose()
+	{
+		ThemeService.Changed -= OnThemeChanged;
+	}
 }

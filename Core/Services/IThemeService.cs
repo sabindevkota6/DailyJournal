@@ -1,21 +1,28 @@
-using System;
-using System.Threading.Tasks;
-
 namespace DailyJournal.Core.Services;
 
+// enum representing the available theme modes
 public enum AppThemeMode
 {
- System =0,
- Light =1,
- Dark =2
+    System = 0,  // following system preference
+    Light = 1,   // always light theme
+    Dark = 2     // always dark theme
 }
 
+// interface for theme management
 public interface IThemeService
 {
- AppThemeMode Mode { get; }
- bool IsDarkMode { get; }
- event Action? Changed;
+    // getting the current theme mode setting
+    AppThemeMode Mode { get; }
 
- Task InitializeAsync();
- Task SetModeAsync(AppThemeMode mode);
+    // returning true if dark mode is currently active
+    bool IsDarkMode { get; }
+
+    // event fired when theme changes
+    event Action? Changed;
+
+    // initializing the theme service and loading saved preference
+    Task InitializeAsync();
+
+    // setting and saving the theme mode
+    Task SetModeAsync(AppThemeMode mode);
 }

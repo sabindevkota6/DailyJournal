@@ -1,78 +1,87 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @using DailyJournal.Core.Services
 @using MudBlazor
 @implements IDisposable
 @inject IThemeService ThemeService
 
+<!-- main theme provider and MudBlazor popup providers -->
 <MudThemeProvider @ref="_mudThemeProvider" Theme="@_theme" IsDarkMode="@ThemeService.IsDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<!-- main page layout with sidebar and content area -->
 <div class="page @(ThemeService.IsDarkMode ? "dark-mode" : "light-mode")">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+	<div class="sidebar">
+		<NavMenu />
+	</div>
 
-    <main>
-        <article class="content px-4">
-  @Body
-        </article>
-    </main>
+	<main>
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
 </div>
 
 @code {
-    private MudThemeProvider? _mudThemeProvider;
+	// reference to the MudBlazor theme provider
+	private MudThemeProvider? _mudThemeProvider;
 
-    private readonly MudTheme _theme = new()
-    {
-   PaletteLight = new PaletteLight()
-        {
-Primary = "#A0826D",
-            PrimaryDarken = "#8B7058",
-     PrimaryLighten = "#C4A68D",
-            Secondary = "#9b7b63",
-   Background = "#FFFBEB",
- Surface = "#FFFFFF",
-     AppbarBackground = "#FFFFFF",
-            DrawerBackground = "#FFFFFF",
-            TextPrimary = "#424242",
-   TextSecondary = "#666666",
-    ActionDefault = "#A0826D",
-      ActionDisabled = "#9E9E9E",
-            Divider = "#E0E0E0",
-            DividerLight = "#F5F5F5",
-      },
-    PaletteDark = new PaletteDark()
-        {
-     Primary = "#F44336",
-  PrimaryDarken = "#D32F2F",
-       PrimaryLighten = "#EF5350",
-    Secondary = "#E53935",
-       Background = "#121212",
-    Surface = "#1E1E1E",
-            AppbarBackground = "#1E1E1E",
-            DrawerBackground = "#1E1E1E",
-         TextPrimary = "#FFFFFF",
-         TextSecondary = "#B0B0B0",
-      ActionDefault = "#F44336",
-       ActionDisabled = "#757575",
-      Divider = "#424242",
-            DividerLight = "#2D2D2D",
-  Dark = "#000000",
-            DarkLighten = "#1A1A1A",
-        }
-    };
+	// custom theme definition with light and dark palettes
+	private readonly MudTheme _theme = new()
+	{
+		// light mode color palette
+		PaletteLight = new PaletteLight()
+		{
+			Primary = "#A0826D",
+			PrimaryDarken = "#8B7058",
+			PrimaryLighten = "#C4A68D",
+			Secondary = "#9b7b63",
+			Background = "#FFFBEB",
+			Surface = "#FFFFFF",
+			AppbarBackground = "#FFFFFF",
+			DrawerBackground = "#FFFFFF",
+			TextPrimary = "#424242",
+			TextSecondary = "#666666",
+			ActionDefault = "#A0826D",
+			ActionDisabled = "#9E9E9E",
+			Divider = "#E0E0E0",
+			DividerLight = "#F5F5F5",
+		},
+		// dark mode color palette
+		PaletteDark = new PaletteDark()
+		{
+			Primary = "#F44336",
+			PrimaryDarken = "#D32F2F",
+			PrimaryLighten = "#EF5350",
+			Secondary = "#E53935",
+			Background = "#121212",
+			Surface = "#1E1E1E",
+			AppbarBackground = "#1E1E1E",
+			DrawerBackground = "#1E1E1E",
+			TextPrimary = "#FFFFFF",
+			TextSecondary = "#B0B0B0",
+			ActionDefault = "#F44336",
+			ActionDisabled = "#757575",
+			Divider = "#424242",
+			DividerLight = "#2D2D2D",
+			Dark = "#000000",
+			DarkLighten = "#1A1A1A",
+		}
+	};
 
-    protected override void OnInitialized()
- {
-        ThemeService.Changed += OnThemeUpdated;
-    }
+	// subscribing to theme changes on initialization
+	protected override void OnInitialized()
+	{
+		ThemeService.Changed += OnThemeUpdated;
+	}
 
-    private void OnThemeUpdated() => InvokeAsync(StateHasChanged);
+	// handler for theme change events
+	private void OnThemeUpdated() => InvokeAsync(StateHasChanged);
 
-    public void Dispose()
-    {
-        ThemeService.Changed -= OnThemeUpdated;
-    }
+	// unsubscribing from theme changes on disposal
+	public void Dispose()
+	{
+		ThemeService.Changed -= OnThemeUpdated;
+	}
 }

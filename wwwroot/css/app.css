@@ -6,17 +6,17 @@ html, body {
 /* Emoji rendering support */
 .emoji {
     font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-font-style: normal;
+    font-style: normal;
     font-weight: normal;
     font-variant: normal;
 }
 
 a, .btn-link {
-  color: #006bb7;
+    color: #006bb7;
 }
 
 .btn-primary {
- color: #fff;
+    color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
 }
@@ -31,7 +31,7 @@ a, .btn-link {
 
 /*#endif*/
 h1:focus {
-  outline: none;
+    outline: none;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -49,7 +49,7 @@ h1:focus {
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
-box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
     left: 0;
     padding: 0.6rem 1.25rem 0.7rem 1.25rem;
@@ -63,6 +63,7 @@ box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     position: absolute;
     right: 0.75rem;
     top: 0.5rem;
+
 }
 
 .blazor-error-boundary {
@@ -81,13 +82,13 @@ box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
 
 @supports (-webkit-touch-callout: none) {
     .status-bar-safe-area {
-      display: flex;
-    position: sticky;
+        display: flex;
+        position: sticky;
         top: 0;
-    height: env(safe-area-inset-top);
+        height: env(safe-area-inset-top);
         background-color: #f7f7f7;
         width: 100%;
-    z-index: 1;
+        z-index: 1;
     }
 
     .flex-column, .navbar-brand {
@@ -175,7 +176,7 @@ box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
 .dark-mode .search-field .mud-input-outlined,
 .dark-mode .search-field input,
 .dark-mode .search-field .mud-input-control-input-container {
- background-color: #2D2D2D !important;
+    background-color: #2D2D2D !important;
     color: #FFFFFF !important;
 }
 
@@ -191,48 +192,57 @@ box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
 
 /* Dark mode Quill editor */
 .dark-mode .quill-editor {
-  background-color: #2D2D2D !important;
+    background-color: #2D2D2D !important;
     color: #FFFFFF !important;
 }
 
 .dark-mode .quill-editor .ql-toolbar {
     background-color: #1E1E1E !important;
     border-color: #424242 !important;
+
 }
 
 .dark-mode .quill-editor .ql-container {
     border-color: #424242 !important;
     color: #FFFFFF !important;
+
 }
 
 .dark-mode .quill-editor .ql-editor {
     color: #FFFFFF !important;
+
 }
 
 .dark-mode .quill-editor .ql-editor.ql-blank::before {
     color: #9E9E9E !important;
+
 }
 
 .dark-mode .quill-editor .ql-toolbar button,
 .dark-mode .quill-editor .ql-toolbar .ql-picker {
     color: #FFFFFF !important;
+
 }
 
 .dark-mode .quill-editor .ql-toolbar button:hover,
 .dark-mode .quill-editor .ql-toolbar .ql-picker:hover {
     color: #F44336 !important;
+
 }
 
 .dark-mode .quill-editor .ql-stroke {
     stroke: #FFFFFF !important;
+
 }
 
 .dark-mode .quill-editor .ql-fill {
     fill: #FFFFFF !important;
+
 }
 
 .dark-mode .quill-editor .ql-picker-label {
     color: #FFFFFF !important;
+
 }
 
 /* Dark mode dialog input focus border */
@@ -247,14 +257,17 @@ box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
 
 .dark-mode .tag-breakdown-item:hover {
     background: #4A3535 !important;
+
 }
 
 .dark-mode .recent-entry-card {
     background: #3D2A2A !important;
+
 }
 
 .dark-mode .recent-entry-card:hover {
     background: #4A3535 !important;
+
 }
 
 /* Dark mode navbar active state */
@@ -272,14 +285,17 @@ box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     background-color: rgba(255, 255, 255, 0.08) !important;
     border-color: #FFFFFF !important;
     color: #FFFFFF !important;
+
 }
 
 .dark-mode .quick-actions-grid .mud-button-outlined .mud-icon-root {
     color: #E0E0E0 !important;
+
 }
 
 .dark-mode .quick-actions-grid .mud-button-outlined:hover .mud-icon-root {
     color: #FFFFFF !important;
+
 }
 
 .dark-mode .button-group .mud-button-outlined {
@@ -290,13 +306,16 @@ box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
 .dark-mode .button-group .mud-button-outlined:hover {
     background-color: rgba(255, 255, 255, 0.08) !important;
     border-color: #FFFFFF !important;
-  color: #FFFFFF !important;
+    color: #FFFFFF !important;
+
 }
 
 .dark-mode .button-group .mud-button-outlined .mud-icon-root {
     color: #E0E0E0 !important;
+
 }
 
 .dark-mode .button-group .mud-button-outlined:hover .mud-icon-root {
     color: #FFFFFF !important;
+
 }

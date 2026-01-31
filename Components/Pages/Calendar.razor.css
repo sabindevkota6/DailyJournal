@@ -34,15 +34,15 @@
     padding: 16px 24px !important;
     margin-bottom: 24px;
     border-radius: 12px;
- background: var(--mud-palette-surface);
+    background: var(--mud-palette-surface);
 }
 
 /* Calendar Grid */
 ::deep .calendar-grid {
     padding: 24px !important;
-  margin-bottom: 24px;
+    margin-bottom: 24px;
     border-radius: 12px;
- background: var(--mud-palette-surface);
+    background: var(--mud-palette-surface);
 }
 
 .calendar-days-header {
@@ -53,7 +53,7 @@
 }
 
 .day-header {
-  text-align: center;
+    text-align: center;
     font-weight: 600;
     color: var(--mud-palette-text-secondary);
     padding: 8px;
@@ -114,14 +114,14 @@
     color: white;
     width: 28px;
     height: 28px;
- border-radius: 50%;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .day-emoji {
-margin-top: 4px;
+    margin-top: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -154,7 +154,7 @@ margin-top: 4px;
 .legend-item {
     display: flex;
     align-items: center;
- gap: 8px;
+    gap: 8px;
     color: var(--mud-palette-text-primary);
 }
 
@@ -171,13 +171,13 @@ margin-top: 4px;
 }
 
 .entry-preview {
- display: flex;
+    display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
 .entry-header-row {
-  display: flex;
+    display: flex;
     justify-content: space-between;
     align-items: center;
 }
@@ -198,7 +198,7 @@ margin-top: 4px;
 }
 
 ::deep .view-entry-button .mud-icon-root {
-color: #FFFFFF !important;
+    color: #FFFFFF !important;
 }
 
 .entry-date {
@@ -213,7 +213,7 @@ color: #FFFFFF !important;
 .entry-meta-row {
     display: flex;
     gap: 8px;
-  flex-wrap: wrap;
+    flex-wrap: wrap;
     align-items: center;
 }
 
@@ -232,7 +232,7 @@ color: #FFFFFF !important;
 }
 
 .mood-chip-positive {
-  background-color: var(--mud-palette-primary);
+    background-color: var(--mud-palette-primary);
 }
 
 .mood-chip-negative {
@@ -245,13 +245,13 @@ color: #FFFFFF !important;
 
 .mood-chip-secondary {
     background-color: transparent;
-  color: var(--mud-palette-text-primary);
+    color: var(--mud-palette-text-primary);
     border: 1px solid var(--mud-palette-divider);
 }
 
 .tags-inline {
     display: flex;
- gap: 6px;
+    gap: 6px;
     flex-wrap: wrap;
 }
 
@@ -267,19 +267,21 @@ color: #FFFFFF !important;
 ::deep .entry-title {
     margin: 0;
     font-weight: 700 !important;
-  color: var(--mud-palette-primary) !important;
+    color: var(--mud-palette-primary) !important;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
     .calendar-container {
-    padding: 24px 50px;
+        padding: 24px 50px;
+
     }
+
 }
 
 @media (max-width: 768px) {
     .calendar-container {
-  padding: 16px;
+        padding: 16px;
     }
 
     ::deep .month-selector {
@@ -289,11 +291,12 @@ color: #FFFFFF !important;
     ::deep .calendar-grid {
         padding: 12px !important;
     }
+    
+    .calendar-days-header {
+        gap: 4px;
 
-  .calendar-days-header {
-     gap: 4px;
     }
-
+    
     .day-header {
         font-size: 0.7rem;
         padding: 4px 2px;
@@ -314,7 +317,7 @@ color: #FFFFFF !important;
 
     .day-number.today {
         width: 24px;
-   height: 24px;
+        height: 24px;
     }
 
     .day-emoji .mud-icon-root {
@@ -326,7 +329,7 @@ color: #FFFFFF !important;
     }
 
     .legend-item {
-      font-size: 0.8rem;
+        font-size: 0.8rem;
     }
 
     .legend-item .mud-icon-root {
@@ -334,7 +337,7 @@ color: #FFFFFF !important;
     }
 
     ::deep .mood-legend {
-      padding: 12px 16px !important;
+        padding: 12px 16px !important;
     }
 
     ::deep .selected-day-section {
@@ -342,9 +345,9 @@ color: #FFFFFF !important;
     }
 
     .entry-header-row {
-  flex-direction: column;
+        flex-direction: column;
         align-items: flex-start;
-   gap: 12px;
+        gap: 12px;
     }
 }
 
@@ -361,18 +364,18 @@ color: #FFFFFF !important;
     }
 
     .day-header {
-  font-size: 0.65rem;
-   padding: 2px;
+        font-size: 0.65rem;
+        padding: 2px;
     }
 
     .day-number {
- font-size: 0.75rem;
+        font-size: 0.75rem;
         margin-bottom: 2px;
     }
 
     .day-number.today {
         width: 20px;
-    height: 20px;
+        height: 20px;
     }
 
     .day-emoji .mud-icon-root {
@@ -385,19 +388,20 @@ color: #FFFFFF !important;
     }
 
     .legend-item {
-    font-size: 0.75rem;
+        font-size: 0.75rem;
     }
 
     .legend-item .mud-icon-root {
         font-size: 1rem !important;
     }
-
- .entry-meta-row {
+    
+    .entry-meta-row {
         flex-direction: column;
         align-items: flex-start;
     }
+    
+    .tags-inline {
+        margin-top: 4px;
 
- .tags-inline {
-margin-top: 4px;
     }
 }

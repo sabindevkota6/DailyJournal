@@ -1,7 +1,7 @@
 .settings-container {
     max-width: 100%;
     margin: 0;
-  padding: 24px 150px;
+    padding: 24px 150px;
 }
 
 .settings-header {
@@ -15,7 +15,7 @@
 }
 
 ::deep .settings-subtitle {
- color: var(--mud-palette-text-secondary) !important;
+    color: var(--mud-palette-text-secondary) !important;
 }
 
 ::deep .settings-section {
@@ -51,11 +51,11 @@
 .theme-mode-btn {
     display: flex;
     flex-direction: column;
-  align-items: center;
+    align-items: center;
     justify-content: center;
-  gap: 12px;
+    gap: 12px;
     padding: 32px 24px;
-  border: 2px solid var(--mud-palette-divider);
+    border: 2px solid var(--mud-palette-divider);
     border-radius: 8px;
     background: var(--mud-palette-surface);
     cursor: pointer;
@@ -92,7 +92,7 @@
 }
 
 .theme-mode-btn.dark-mode.active {
-      border-color: #F44336;
+    border-color: #F44336;
     background: #F44336;
 }
 
@@ -147,7 +147,7 @@
     height: 56px;
     border-radius: 8px;
     font-weight: 500;
- background-color: #dc3545 !important;
+    background-color: #dc3545 !important;
     color: #FFFFFF !important;
 }
 
@@ -162,7 +162,7 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-.settings-container {
+    .settings-container {
         padding: 24px 50px;
     }
 }
@@ -173,7 +173,7 @@
     }
 
     .theme-buttons {
-     grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
 
     .change-pin-form {

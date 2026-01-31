@@ -1,15 +1,14 @@
 ﻿using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DailyJournal.Core.Services
 {
+    // interface for database operations
     public interface IDatabaseService
     {
+        // getting the SQLite async connection for database queries
         SQLiteAsyncConnection Connection { get; }
+
+        // initializing the database and creating tables if needed
         Task InitializeAsync();
     }
 }

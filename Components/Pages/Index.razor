@@ -4,20 +4,20 @@
 @inject NavigationManager Nav
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        try
-  {
-            var hasPin = await UserService.HasPinAsync();
-  
-         // If no PIN is set, go to login to set it up
-  // If PIN exists, also go to login for authentication
-     Nav.NavigateTo("/login", replace: true);
-    }
-    catch (Exception ex)
- {
-    System.Diagnostics.Debug.WriteLine($"Error checking PIN status: {ex}");
-    Nav.NavigateTo("/login", replace: true);
-        }
-}
+	// checking if user has PIN and redirecting to login page
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			var hasPin = await UserService.HasPinAsync();
+
+			// redirecting to login page for authentication or PIN setup
+			Nav.NavigateTo("/login", replace: true);
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error checking PIN status: {ex}");
+			Nav.NavigateTo("/login", replace: true);
+		}
+	}
 }

@@ -1,34 +1,39 @@
 using DailyJournal.Core.Services;
-using Microsoft.Maui.Storage;
-using System;
-using System.Threading.Tasks;
 
 namespace DailyJournal.Data.Services;
 
+// service class for managing application theme (light/dark mode)
 public class ThemeService : IThemeService
 {
+    // key used to store theme preference
     private const string ThemeKey = "theme.mode";
 
+    // current theme mode setting
     public AppThemeMode Mode { get; private set; } = AppThemeMode.System;
 
+    // returning true if dark mode is currently active
     public bool IsDarkMode => Mode switch
     {
         AppThemeMode.Dark => true,
         AppThemeMode.Light => false,
-        _ => Application.Current?.RequestedTheme == AppTheme.Dark
+        _ => Application.Current?.RequestedTheme == AppTheme.Dark  // following system preference
     };
 
+    // event fired when theme changes
     public event Action? Changed;
 
+    // initializing theme from saved preferences
     public Task InitializeAsync()
     {
         try
         {
+            // loading saved theme preference or defaulting to System
             var stored = Preferences.Default.Get(ThemeKey, (int)AppThemeMode.System);
             Mode = Enum.IsDefined(typeof(AppThemeMode), stored) ? (AppThemeMode)stored : AppThemeMode.System;
 
             System.Diagnostics.Debug.WriteLine($"Theme initialized to mode: {Mode}");
 
+            // applying theme and notifying listeners
             ApplyModeToMaui();
             Changed?.Invoke();
 
@@ -42,6 +47,7 @@ public class ThemeService : IThemeService
         }
     }
 
+    // setting and saving a new theme mode
     public Task SetModeAsync(AppThemeMode mode)
     {
         try
@@ -51,6 +57,7 @@ public class ThemeService : IThemeService
 
             System.Diagnostics.Debug.WriteLine($"Theme changed to mode: {Mode}");
 
+            // applying theme and notifying listeners
             ApplyModeToMaui();
             Changed?.Invoke();
 
@@ -63,6 +70,7 @@ public class ThemeService : IThemeService
         }
     }
 
+    // applying the theme mode to the MAUI application
     private void ApplyModeToMaui()
     {
         try
@@ -73,11 +81,12 @@ public class ThemeService : IThemeService
                 return;
             }
 
+            // mapping our theme mode to MAUI AppTheme
             Application.Current.UserAppTheme = Mode switch
             {
                 AppThemeMode.Light => AppTheme.Light,
                 AppThemeMode.Dark => AppTheme.Dark,
-                _ => AppTheme.Unspecified
+                _ => AppTheme.Unspecified  // letting system decide
             };
 
             System.Diagnostics.Debug.WriteLine($"Applied theme to MAUI: {Application.Current.UserAppTheme}");

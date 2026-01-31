@@ -9,217 +9,230 @@
 @using DailyJournal.Components.Dialogs
 @implements IDisposable
 
+<!-- settings page container -->
 <div class="settings-container">
-    <div class="settings-header">
-        <MudText Typo="Typo.h4" Class="settings-title">Settings</MudText>
-        <MudText Typo="Typo.body2" Class="settings-subtitle">Manage your journal preferences</MudText>
-    </div>
+	<!-- page header -->
+	<div class="settings-header">
+		<MudText Typo="Typo.h4" Class="settings-title">Settings</MudText>
+		<MudText Typo="Typo.body2" Class="settings-subtitle">Manage your journal preferences</MudText>
+	</div>
 
-    <MudPaper Class="settings-section" Elevation="1">
-        <div class="section-header">
-            <MudIcon Icon="@Icons.Material.Filled.Palette" Size="MudSize.Small" />
-            <MudText Typo="Typo.h6">Appearance</MudText>
-        </div>
+	<!-- appearance section -->
+	<MudPaper Class="settings-section" Elevation="1">
+		<div class="section-header">
+			<MudIcon Icon="@Icons.Material.Filled.Palette" Size="MudSize.Small" />
+			<MudText Typo="Typo.h6">Appearance</MudText>
+		</div>
 
-        <MudText Typo="Typo.body2" Class="section-subtitle">
-            Choose your preferred theme
-        </MudText>
+		<MudText Typo="Typo.body2" Class="section-subtitle">
+			Choose your preferred theme
+		</MudText>
 
-        <div class="theme-buttons">
-            <button class="theme-mode-btn light-mode @(selectedTheme == AppThemeMode.Light ? "active" : "")"
-                @onclick="@(() => SelectTheme(AppThemeMode.Light))">
-                <MudIcon Icon="@Icons.Material.Filled.LightMode" Size="MudSize.Large" />
-                <span>Light Mode</span>
-            </button>
+		<!-- theme selection buttons -->
+		<div class="theme-buttons">
+			<button class="theme-mode-btn light-mode @(selectedTheme == AppThemeMode.Light ? "active" : "")"
+				@onclick="@(() => SelectTheme(AppThemeMode.Light))">
+				<MudIcon Icon="@Icons.Material.Filled.LightMode" Size="MudSize.Large" />
+				<span>Light Mode</span>
+			</button>
 
-            <button class="theme-mode-btn dark-mode @(selectedTheme == AppThemeMode.Dark ? "active" : "")"
-                @onclick="@(() => SelectTheme(AppThemeMode.Dark))">
-                <MudIcon Icon="@Icons.Material.Filled.DarkMode" Size="MudSize.Large" />
-                <span>Dark Mode</span>
-            </button>
-        </div>
-    </MudPaper>
+			<button class="theme-mode-btn dark-mode @(selectedTheme == AppThemeMode.Dark ? "active" : "")"
+				@onclick="@(() => SelectTheme(AppThemeMode.Dark))">
+				<MudIcon Icon="@Icons.Material.Filled.DarkMode" Size="MudSize.Large" />
+				<span>Dark Mode</span>
+			</button>
+		</div>
+	</MudPaper>
 
-    <!-- Security & Privacy Section -->
-    <MudPaper Class="settings-section" Elevation="1">
-        <div class="section-header">
-          <MudIcon Icon="@Icons.Material.Filled.Security" Size="MudSize.Small" />
-            <MudText Typo="Typo.h6">Security & Privacy</MudText>
-        </div>
+	<!-- security and privacy section -->
+	<MudPaper Class="settings-section" Elevation="1">
+		<div class="section-header">
+			<MudIcon Icon="@Icons.Material.Filled.Security" Size="MudSize.Small" />
+			<MudText Typo="Typo.h6">Security & Privacy</MudText>
+		</div>
 
-        <MudButton Variant="Variant.Filled"
-                   Color="MudColor.Dark"
-                   FullWidth="true"
-                   Size="MudSize.Large"
-                   OnClick="OpenChangePinDialog"
-                   Class="change-pin-button"
-                   StartIcon="@Icons.Material.Filled.Lock">
-            Change PIN
-        </MudButton>
-    </MudPaper>
+		<MudButton Variant="Variant.Filled"
+				   Color="MudColor.Dark"
+				   FullWidth="true"
+				   Size="MudSize.Large"
+				   OnClick="OpenChangePinDialog"
+				   Class="change-pin-button"
+				   StartIcon="@Icons.Material.Filled.Lock">
+				   Change PIN
+		</MudButton>
+	</MudPaper>
 
-  <!-- About Section -->
-    <MudPaper Class="settings-section about-section" Elevation="1">
-        <div class="section-header">
-        <MudIcon Icon="@Icons.Material.Filled.Info" Size="MudSize.Small" />
-            <MudText Typo="Typo.h6">About</MudText>
-        </div>
+	<!-- about section -->
+	<MudPaper Class="settings-section about-section" Elevation="1">
+		<div class="section-header">
+			<MudIcon Icon="@Icons.Material.Filled.Info" Size="MudSize.Small" />
+			<MudText Typo="Typo.h6">About</MudText>
+		</div>
 
-      <div class="about-content">
-         <div class="about-item">
-      <MudText Typo="Typo.body2" Class="about-label">Version:</MudText>
-                <MudText Typo="Typo.body2" Class="about-value">1.0.0</MudText>
-          </div>
-          <div class="about-item">
-    <MudText Typo="Typo.body2" Class="about-label">Framework:</MudText>
-            <MudText Typo="Typo.body2" Class="about-value">MAUI Blazor Hybrid</MudText>
-</div>
-          <div class="about-item">
-          <MudText Typo="Typo.body2" Class="about-label">Database:</MudText>
-        <MudText Typo="Typo.body2" Class="about-value">SQLite (Local)</MudText>
-       </div>
-    <div class="about-item">
-             <MudText Typo="Typo.body2" Class="about-label">Features:</MudText>
-  <MudText Typo="Typo.body2" Class="about-value">Rich text editing, mood tracking, analytics, export</MudText>
- </div>
-        </div>
+		<div class="about-content">
+			<div class="about-item">
+				<MudText Typo="Typo.body2" Class="about-label">Version:</MudText>
+				<MudText Typo="Typo.body2" Class="about-value">1.0.0</MudText>
+			</div>
+			<div class="about-item">
+				<MudText Typo="Typo.body2" Class="about-label">Framework:</MudText>
+				<MudText Typo="Typo.body2" Class="about-value">MAUI Blazor Hybrid</MudText>
+			</div>
+			<div class="about-item">
+				<MudText Typo="Typo.body2" Class="about-label">Database:</MudText>
+				<MudText Typo="Typo.body2" Class="about-value">SQLite (Local)</MudText>
+			</div>
+			<div class="about-item">
+				<MudText Typo="Typo.body2" Class="about-label">Features:</MudText>
+				<MudText Typo="Typo.body2" Class="about-value">Rich text editing, mood tracking, analytics, export</MudText>
+			</div>
+		</div>
 
-        <MudButton Variant="Variant.Filled"
-   FullWidth="true"
-     Size="MudSize.Large"
-   OnClick="HandleLogout"
-   Class="logout-button"
-     StartIcon="@Icons.Material.Filled.Logout">
-       Logout
-        </MudButton>
-    </MudPaper>
+		<!-- logout button -->
+		<MudButton Variant="Variant.Filled"
+				   FullWidth="true"
+				   Size="MudSize.Large"
+				   OnClick="HandleLogout"
+				   Class="logout-button"
+				   StartIcon="@Icons.Material.Filled.Logout">
+			Logout
+		</MudButton>
+	</MudPaper>
 </div>
 
 @code {
-    private AppThemeMode selectedTheme;
+	// currently selected theme mode
+	private AppThemeMode selectedTheme;
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            selectedTheme = ThemeService.Mode;
-            ThemeService.Changed += OnThemeChanged;
-        
-            CheckForPinChangeSuccess();
-       
-            await Task.CompletedTask;
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error initializing Settings: {ex.Message}");
-        }
-    }
+	// initializing the settings page
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			selectedTheme = ThemeService.Mode;
+			ThemeService.Changed += OnThemeChanged;
 
-    private void CheckForPinChangeSuccess()
-    {
-        try
-        {
-            var uri = new Uri(Nav.Uri);
-            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-            var pinChanged = query["pinChanged"];
-            
-            if (pinChanged == "true")
-            {
-                Snackbar.Add("PIN changed successfully! Your new PIN is now active.", Severity.Success);
-                System.Diagnostics.Debug.WriteLine("Showing PIN change success message on Settings page");
-               
-                Nav.NavigateTo("/settings", replace: true);
-            }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error checking PIN change parameter: {ex.Message}");
-        }
-    }
+			CheckForPinChangeSuccess();
 
-    private async Task SelectTheme(AppThemeMode mode)
- {
-        try
-{
-            if (selectedTheme != mode)
-       {
-        selectedTheme = mode;
-       await ThemeService.SetModeAsync(mode);
-              Snackbar.Add($"Theme changed to {mode} mode", Severity.Success);
-          }
-        }
-        catch (Exception ex)
-        {
-  System.Diagnostics.Debug.WriteLine($"Error selecting theme: {ex.Message}");
-    Snackbar.Add("Error changing theme", Severity.Error);
-     }
-    }
+			await Task.CompletedTask;
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error initializing Settings: {ex.Message}");
+		}
+	}
 
-    private void OnThemeChanged()
-    {
-        try
-   {
-     selectedTheme = ThemeService.Mode;
-            InvokeAsync(StateHasChanged);
- }
-        catch (Exception ex)
-{
-            System.Diagnostics.Debug.WriteLine($"Error in OnThemeChanged: {ex.Message}");
-        }
-    }
+	// checking if PIN was just changed and showing success message
+	private void CheckForPinChangeSuccess()
+	{
+		try
+		{
+			var uri = new Uri(Nav.Uri);
+			var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+			var pinChanged = query["pinChanged"];
 
-    private async Task OpenChangePinDialog()
-    {
-     try
-        {
-     var options = new DialogOptions
-   {
-       MaxWidth = MaxWidth.Small,
-      FullWidth = true,
-       CloseButton = true,
-CloseOnEscapeKey = true
-  };
+			if (pinChanged == "true")
+			{
+				Snackbar.Add("PIN changed successfully! Your new PIN is now active.", Severity.Success);
+				System.Diagnostics.Debug.WriteLine("Showing PIN change success message on Settings page");
 
-   var dialog = await DialogService.ShowAsync<ChangePinDialog>("Change PIN", options);
- var result = await dialog.Result;
+				Nav.NavigateTo("/settings", replace: true);
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error checking PIN change parameter: {ex.Message}");
+		}
+	}
 
-  if (result != null && !result.Canceled)
-   {
-     }
-        }
-      catch (Exception ex)
-{
-     System.Diagnostics.Debug.WriteLine($"Error opening Change PIN dialog: {ex.Message}");
-     Snackbar.Add("Error opening Change PIN dialog", Severity.Error);
-        }
-    }
+	// selecting a new theme mode
+	private async Task SelectTheme(AppThemeMode mode)
+	{
+		try
+		{
+			if (selectedTheme != mode)
+			{
+				selectedTheme = mode;
+				await ThemeService.SetModeAsync(mode);
+				Snackbar.Add($"Theme changed to {mode} mode", Severity.Success);
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error selecting theme: {ex.Message}");
+			Snackbar.Add("Error changing theme", Severity.Error);
+		}
+	}
 
-  private async Task HandleLogout()
-    {
-   try
-        {
-            System.Diagnostics.Debug.WriteLine("Logging out user");
-    
-      await Task.CompletedTask;
-       
-          Nav.NavigateTo("/login?loggedOut=true", forceLoad: true);
-    }
-        catch (Exception ex)
-        {
-    System.Diagnostics.Debug.WriteLine($"Error during logout: {ex.Message}");
-      Snackbar.Add("Error logging out", Severity.Error);
-        }
-    }
+	// handling theme change events
+	private void OnThemeChanged()
+	{
+		try
+		{
+			selectedTheme = ThemeService.Mode;
+			InvokeAsync(StateHasChanged);
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error in OnThemeChanged: {ex.Message}");
+		}
+	}
 
-    public void Dispose()
-    {
-        try
-        {
-            ThemeService.Changed -= OnThemeChanged;
-   }
-        catch (Exception ex)
-        {
-   System.Diagnostics.Debug.WriteLine($"Error disposing Settings: {ex.Message}");
-        }
-    }
+	// opening the change PIN dialog
+	private async Task OpenChangePinDialog()
+	{
+		try
+		{
+			var options = new DialogOptions
+			{
+				MaxWidth = MaxWidth.Small,
+				FullWidth = true,
+				CloseButton = true,
+				CloseOnEscapeKey = true
+			};
+
+			var dialog = await DialogService.ShowAsync<ChangePinDialog>("Change PIN", options);
+			var result = await dialog.Result;
+
+			if (result != null && !result.Canceled)
+			{
+			}
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error opening Change PIN dialog: {ex.Message}");
+			Snackbar.Add("Error opening Change PIN dialog", Severity.Error);
+		}
+	}
+
+	// handling user logout
+	private async Task HandleLogout()
+	{
+		try
+		{
+			System.Diagnostics.Debug.WriteLine("Logging out user");
+
+			await Task.CompletedTask;
+
+			Nav.NavigateTo("/login?loggedOut=true", forceLoad: true);
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error during logout: {ex.Message}");
+			Snackbar.Add("Error logging out", Severity.Error);
+		}
+	}
+
+	// cleaning up event subscription
+	public void Dispose()
+	{
+		try
+		{
+			ThemeService.Changed -= OnThemeChanged;
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error disposing Settings: {ex.Message}");
+		}
+	}
 }

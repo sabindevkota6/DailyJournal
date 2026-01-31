@@ -12,30 +12,29 @@
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 </head>
-
 <body>
 
     <div class="status-bar-safe-area"></div>
 
     <div id="app">
-    <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(to bottom right, #FFFBEB 0%, #F5F5F4 100%);">
-  <div style="text-align: center;">
-          <div class="spinner"></div>
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(to bottom right, #FFFBEB 0%, #F5F5F4 100%);">
+            <div style="text-align: center;">
+                <div class="spinner"></div>
                 <div style="margin-top: 24px; font-size: 18px; color: #A0826D; font-weight: 500;">Loading...</div>
-    </div>
-      </div>
+            </div>
+        </div>
     </div>
 
     <div id="blazor-error-ui" style="display: none;">
-      <div style="background: #f44336; color: white; padding: 20px; text-align: center; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;">
-            <strong>⚠️ An error occurred</strong>
-  <p style="margin: 10px 0;">Check the browser console (F12) for details.</p>
-          <button onclick="location.reload()" style="background: white; color: #f44336; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-   🔄 Reload
+        <div style="background: #f44336; color: white; padding: 20px; text-align: center; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;">
+            <strong>An error occurred</strong>
+            <p style="margin: 10px 0;">Check the browser console (F12) for details.</p>
+            <button onclick="location.reload()" style="background: white; color: #f44336; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                Reload
             </button>
-   <button class="dismiss" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
-          ✕ Dismiss
-     </button>
+            <button class="dismiss" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                Dismiss
+            </button>
         </div>
     </div>
 
@@ -46,30 +45,33 @@
             border-radius: 50%;
             width: 48px;
             height: 48px;
-     animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
             margin: 0 auto;
         }
 
         @keyframes spin {
-  to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         #blazor-error-ui {
-       animation: slideUp 0.3s ease-out;
-   }
+            animation: slideUp 0.3s ease-out;
+        }
 
         @keyframes slideUp {
-          from {
-             transform: translateY(100%);
-        }
-  to {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
                 transform: translateY(0);
             }
         }
 
         .dismiss:hover {
             background: rgba(255,255,255,0.3);
- }
+        }
     </style>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
@@ -77,49 +79,47 @@
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
     <script src="js/quill-interop.js"></script>
 
-  <script>
+    <script>
         // Global error handler
-        window.addEventListener('error', function(event) {
-        console.error('Global error:', event.error);
-console.error('Error message:', event.message);
+        window.addEventListener('error', function (event) {
+            console.error('Global error:', event.error);
+            console.error('Error message:', event.message);
             console.error('Error stack:', event.error?.stack);
 
-     const errorUI = document.getElementById('blazor-error-ui');
-     if (errorUI) {
-    errorUI.style.display = 'block';
+            const errorUI = document.getElementById('blazor-error-ui');
+            if (errorUI) {
+                errorUI.style.display = 'block';
             }
         });
 
         // Blazor error handler
         Blazor.start({
-            errorHandler: function(error) {
-   console.error('Blazor error:', error);
+            errorHandler: function (error) {
+                console.error('Blazor error:', error);
                 console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-     
-   // Show error details in console
-            if (error.innerException) {
-           console.error('Inner exception:', error.innerException);
-         }
-          
-const errorUI = document.getElementById('blazor-error-ui');
-              if (errorUI) {
- errorUI.style.display = 'block';
-     }
+                console.error('Error stack:', error.stack);
+
+                // Show error details in console
+                if (error.innerException) {
+                    console.error('Inner exception:', error.innerException);
+                }
+
+                const errorUI = document.getElementById('blazor-error-ui');
+                if (errorUI) {
+                    errorUI.style.display = 'block';
+                }
             }
         });
 
         // Handle dismiss button
-        document.addEventListener('DOMContentLoaded', function() {
-   const dismissButton = document.querySelector('#blazor-error-ui .dismiss');
-    if (dismissButton) {
-     dismissButton.addEventListener('click', function() {
-       document.getElementById('blazor-error-ui').style.display = 'none';
-            });
+        document.addEventListener('DOMContentLoaded', function () {
+            const dismissButton = document.querySelector('#blazor-error-ui .dismiss');
+            if (dismissButton) {
+                dismissButton.addEventListener('click', function () {
+                    document.getElementById('blazor-error-ui').style.display = 'none';
+                });
             }
         });
-  </script>
-
+    </script>
 </body>
-
 </html>

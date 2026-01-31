@@ -5,7 +5,7 @@
     width: 100%;
     height: 100%;
     display: flex;
-  justify-content: center;
+    justify-content: center;
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
@@ -20,18 +20,18 @@
 }
 
 .login-card {
-  position: relative;
+    position: relative;
     width: 450px;
     max-width: 90%;
     padding: 48px 40px 56px;
- border-radius: 16px;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     background-color: var(--mud-palette-surface);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--mud-palette-divider);
+    border: 1px solid var(--mud-palette-divider);
 }
 
 .dark-mode .login-card {
@@ -73,7 +73,7 @@
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--mud-palette-text-primary);
- margin-bottom: 4px;
+    margin-bottom: 4px;
 }
 
 .login-subtitle {
@@ -157,7 +157,7 @@
 }
 
 .failed-attempts {
-color: #d32f2f;
+    color: #d32f2f;
     font-size: 0.85rem;
     margin-top: 16px;
     min-height: 20px;
@@ -185,8 +185,8 @@ color: #d32f2f;
     .lock-icon-circle ::deep .mud-icon-root {
       font-size: 35px;
     }
-
-.failed-attempts {
+    
+    .failed-attempts {
         bottom: 16px;
     }
 }

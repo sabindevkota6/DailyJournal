@@ -3,195 +3,214 @@
 @inject NavigationManager Nav
 @using MudBlazor
 
+<!-- change PIN dialog component -->
 <MudDialog>
-    <TitleContent>
-        <MudText Typo="Typo.h6">
-      <MudIcon Icon="@Icons.Material.Filled.Lock" Class="mr-2" /> Change PIN
-</MudText>
-    </TitleContent>
-    <DialogContent>
-    <div class="change-pin-form">
-       <MudText Typo="Typo.body2" Class="mb-4 instruction-text">
-        Enter your current PIN and choose a new 4-digit PIN
-         </MudText>
+	<TitleContent>
+		<MudText Typo="Typo.h6">
+			<MudIcon Icon="@Icons.Material.Filled.Lock" Class="mr-2" /> Change PIN
+		</MudText>
+	</TitleContent>
+	<DialogContent>
+		<div class="change-pin-form">
+			<!-- instruction text -->
+			<MudText Typo="Typo.body2" Class="mb-4 instruction-text">
+				Enter your current PIN and choose a new 4-digit PIN
+			</MudText>
 
-        <MudTextField @bind-Value="currentPin"
-          Label="Current PIN"
-   Variant="Variant.Outlined"
-                InputType="@currentPinInputType"
-   MaxLength="4"
-        Adornment="Adornment.End"
-      AdornmentIcon="@currentPinEyeIcon"
-           OnAdornmentClick="ToggleCurrentPinVisibility"
-     Class="mb-3"
-    HelperText="Enter your current 4-digit PIN"
-                Error="@(!string.IsNullOrEmpty(currentPinError))"
-    ErrorText="@currentPinError" />
+			<!-- current PIN input -->
+			<MudTextField @bind-Value="currentPin"
+						  Label="Current PIN"
+						  Variant="Variant.Outlined"
+						  InputType="@currentPinInputType"
+						  MaxLength="4"
+						  Adornment="Adornment.End"
+						  AdornmentIcon="@currentPinEyeIcon"
+						  OnAdornmentClick="ToggleCurrentPinVisibility"
+						  Class="mb-3"
+						  HelperText="Enter your current 4-digit PIN"
+						  Error="@(!string.IsNullOrEmpty(currentPinError))"
+						  ErrorText="@currentPinError" />
 
-  <MudTextField @bind-Value="newPin"
-          Label="New PIN"
-      Variant="Variant.Outlined"
-        InputType="@newPinInputType"
-           MaxLength="4"
-           Adornment="Adornment.End"
-   AdornmentIcon="@newPinEyeIcon"
-       OnAdornmentClick="ToggleNewPinVisibility"
-     Class="mb-3"
-     HelperText="Enter a new 4-digit PIN"
-          Error="@(!string.IsNullOrEmpty(newPinError))"
-   ErrorText="@newPinError" />
+			<!-- new PIN input -->
+			<MudTextField @bind-Value="newPin"
+						  Label="New PIN"
+						  Variant="Variant.Outlined"
+						  InputType="@newPinInputType"
+						  MaxLength="4"
+						  Adornment="Adornment.End"
+						  AdornmentIcon="@newPinEyeIcon"
+						  OnAdornmentClick="ToggleNewPinVisibility"
+						  Class="mb-3"
+						  HelperText="Enter a new 4-digit PIN"
+						  Error="@(!string.IsNullOrEmpty(newPinError))"
+						  ErrorText="@newPinError" />
 
-<MudTextField @bind-Value="confirmNewPin"
-       Label="Confirm New PIN"
-          Variant="Variant.Outlined"
-        InputType="@confirmPinInputType"
-MaxLength="4"
-   Adornment="Adornment.End"
-    AdornmentIcon="@confirmPinEyeIcon"
-       OnAdornmentClick="ToggleConfirmPinVisibility"
-   HelperText="Re-enter your new PIN to confirm"
-          Error="@(!string.IsNullOrEmpty(confirmPinError))"
-       ErrorText="@confirmPinError" />
+			<!-- confirm new PIN input -->
+			<MudTextField @bind-Value="confirmNewPin"
+						  Label="Confirm New PIN"
+						  Variant="Variant.Outlined"
+						  InputType="@confirmPinInputType"
+						  MaxLength="4"
+						  Adornment="Adornment.End"
+						  AdornmentIcon="@confirmPinEyeIcon"
+						  OnAdornmentClick="ToggleConfirmPinVisibility"
+						  HelperText="Re-enter your new PIN to confirm"
+						  Error="@(!string.IsNullOrEmpty(confirmPinError))"
+						  ErrorText="@confirmPinError" />
 
-    @if (isChangingPin)
-      {
-                <div class="mt-4 text-center">
-     <MudProgressCircular Size="MudSize.Small" Indeterminate="true" />
-    </div>
-        }
-        </div>
-    </DialogContent>
-<DialogActions>
-        <MudButton OnClick="ChangePinAsync"
-    Variant="Variant.Filled"
-       Color="MudColor.Primary"
-          Disabled="@isChangingPin"
-     FullWidth="true">
-  Change PIN
-        </MudButton>
-    </DialogActions>
+			<!-- loading indicator -->
+			@if (isChangingPin)
+			{
+				<div class="mt-4 text-center">
+					<MudProgressCircular Size="MudSize.Small" Indeterminate="true" />
+				</div>
+			}
+		</div>
+	</DialogContent>
+	<DialogActions>
+		<MudButton OnClick="ChangePinAsync"
+				   Variant="Variant.Filled"
+				   Color="MudColor.Primary"
+				   Disabled="@isChangingPin"
+				   FullWidth="true">
+				   Change PIN
+		</MudButton>
+	</DialogActions>
 </MudDialog>
 
 @code {
-    [CascadingParameter]
-    MudBlazor.IDialogReference MudDialog { get; set; } = null!;
+	// reference to the dialog
+	[CascadingParameter]
+	MudBlazor.IDialogReference MudDialog { get; set; } = null!;
 
-    private string currentPin = "";
-    private string newPin = "";
-    private string confirmNewPin = "";
-    private bool isChangingPin = false;
+	// form fields
+	private string currentPin = "";
+	private string newPin = "";
+	private string confirmNewPin = "";
+	private bool isChangingPin = false;
 
-    private string currentPinError = "";
-    private string newPinError = "";
-    private string confirmPinError = "";
+	// error messages for each field
+	private string currentPinError = "";
+	private string newPinError = "";
+	private string confirmPinError = "";
 
-    private bool showCurrentPin = false;
-    private bool showNewPin = false;
-    private bool showConfirmPin = false;
+	// visibility toggles for PIN fields
+	private bool showCurrentPin = false;
+	private bool showNewPin = false;
+	private bool showConfirmPin = false;
 
-    private InputType currentPinInputType => showCurrentPin ? InputType.Text : InputType.Password;
-    private InputType newPinInputType => showNewPin ? InputType.Text : InputType.Password;
-    private InputType confirmPinInputType => showConfirmPin ? InputType.Text : InputType.Password;
+	// computed properties for input types based on visibility
+	private InputType currentPinInputType => showCurrentPin ? InputType.Text : InputType.Password;
+	private InputType newPinInputType => showNewPin ? InputType.Text : InputType.Password;
+	private InputType confirmPinInputType => showConfirmPin ? InputType.Text : InputType.Password;
 
-    private string currentPinEyeIcon => showCurrentPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
-    private string newPinEyeIcon => showNewPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
-    private string confirmPinEyeIcon => showConfirmPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+	// computed properties for eye icons
+	private string currentPinEyeIcon => showCurrentPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+	private string newPinEyeIcon => showNewPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
+	private string confirmPinEyeIcon => showConfirmPin ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility;
 
-    private void ToggleCurrentPinVisibility() => showCurrentPin = !showCurrentPin;
-    private void ToggleNewPinVisibility() => showNewPin = !showNewPin;
-    private void ToggleConfirmPinVisibility() => showConfirmPin = !showConfirmPin;
+	// toggling visibility for each PIN field
+	private void ToggleCurrentPinVisibility() => showCurrentPin = !showCurrentPin;
+	private void ToggleNewPinVisibility() => showNewPin = !showNewPin;
+	private void ToggleConfirmPinVisibility() => showConfirmPin = !showConfirmPin;
 
-    private async Task ChangePinAsync()
-    {
-        currentPinError = "";
-        newPinError = "";
-        confirmPinError = "";
+	// changing the PIN
+	private async Task ChangePinAsync()
+	{
+		// clearing previous errors
+		currentPinError = "";
+		newPinError = "";
+		confirmPinError = "";
 
-        bool isValid = true;
+		bool isValid = true;
 
-        if (string.IsNullOrWhiteSpace(currentPin) || currentPin.Length != 4 || !int.TryParse(currentPin, out _))
-        {
-            currentPinError = "Please enter a valid 4-digit PIN";
-            isValid = false;
-        }
+		// validating current PIN
+		if (string.IsNullOrWhiteSpace(currentPin) || currentPin.Length != 4 || !int.TryParse(currentPin, out _))
+		{
+			currentPinError = "Please enter a valid 4-digit PIN";
+			isValid = false;
+		}
 
-        if (string.IsNullOrWhiteSpace(newPin) || newPin.Length != 4 || !int.TryParse(newPin, out _))
-        {
-            newPinError = "Please enter a valid 4-digit PIN";
-            isValid = false;
-        }
+		// validating new PIN
+		if (string.IsNullOrWhiteSpace(newPin) || newPin.Length != 4 || !int.TryParse(newPin, out _))
+		{
+			newPinError = "Please enter a valid 4-digit PIN";
+			isValid = false;
+		}
 
-        if (string.IsNullOrWhiteSpace(confirmNewPin) || confirmNewPin != newPin)
-        {
-            confirmPinError = "PINs do not match";
-            isValid = false;
-        }
+		// validating confirm PIN matches new PIN
+		if (string.IsNullOrWhiteSpace(confirmNewPin) || confirmNewPin != newPin)
+		{
+			confirmPinError = "PINs do not match";
+			isValid = false;
+		}
 
-        if (!string.IsNullOrWhiteSpace(currentPin) && !string.IsNullOrWhiteSpace(newPin) && currentPin == newPin)
-        {
-            newPinError = "New PIN must be different from current PIN";
-            isValid = false;
-        }
+		// validating new PIN is different from current
+		if (!string.IsNullOrWhiteSpace(currentPin) && !string.IsNullOrWhiteSpace(newPin) && currentPin == newPin)
+		{
+			newPinError = "New PIN must be different from current PIN";
+			isValid = false;
+		}
 
-        if (!isValid)
-        {
-            return;
-        }
+		if (!isValid)
+		{
+			return;
+		}
 
-        try
-        {
-            isChangingPin = true;
-            StateHasChanged();
+		try
+		{
+			isChangingPin = true;
+			StateHasChanged();
 
-            var oldPinValue = int.Parse(currentPin);
-            var newPinValue = int.Parse(newPin);
+			var oldPinValue = int.Parse(currentPin);
+			var newPinValue = int.Parse(newPin);
 
-            System.Diagnostics.Debug.WriteLine($"Attempting to change PIN from {oldPinValue} to {newPinValue}");
+			System.Diagnostics.Debug.WriteLine($"Attempting to change PIN from {oldPinValue} to {newPinValue}");
 
-            var success = await UserService.ChangePinAsync(oldPinValue, newPinValue);
+			var success = await UserService.ChangePinAsync(oldPinValue, newPinValue);
 
-            System.Diagnostics.Debug.WriteLine($"PIN change result: {success}");
+			System.Diagnostics.Debug.WriteLine($"PIN change result: {success}");
 
-            if (success)
-            {
-                Snackbar.Add("PIN changed successfully!", Severity.Success);
-                System.Diagnostics.Debug.WriteLine("PIN changed successfully, closing dialog and navigating to settings");
+			if (success)
+			{
+				Snackbar.Add("PIN changed successfully!", Severity.Success);
+				System.Diagnostics.Debug.WriteLine("PIN changed successfully, closing dialog and navigating to settings");
 
-                MudDialog?.Close(DialogResult.Ok(true));
+				MudDialog?.Close(DialogResult.Ok(true));
 
-                await Task.Delay(600);
-                Nav.NavigateTo("/settings?pinChanged=true", forceLoad: true);
-   
-   System.Diagnostics.Debug.WriteLine("Navigated to settings page with success parameter");
-     }
-            else
-       {
-             currentPinError = "Current PIN is incorrect";
- Snackbar.Add("Failed to change PIN. Current PIN is incorrect.", Severity.Error);
-            }
-        }
- catch (ArgumentException argEx)
-        {
-          newPinError = argEx.Message;
-         Snackbar.Add(argEx.Message, Severity.Warning);
-     System.Diagnostics.Debug.WriteLine($"Argument exception: {argEx}");
-        }
- catch (Exception ex)
-        {
-            var errorMessage = $"Error changing PIN: {ex.Message}";
-            Snackbar.Add(errorMessage, Severity.Error);
-            System.Diagnostics.Debug.WriteLine($"Exception in ChangePinAsync: {ex}");
-            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+				await Task.Delay(600);
+				Nav.NavigateTo("/settings?pinChanged=true", forceLoad: true);
 
-            if (ex.InnerException != null)
-        {
-     System.Diagnostics.Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
-  }
-        }
-finally
-        {
-            isChangingPin = false;
- StateHasChanged();
-        }
-    }
+				System.Diagnostics.Debug.WriteLine("Navigated to settings page with success parameter");
+			}
+			else
+			{
+				currentPinError = "Current PIN is incorrect";
+				Snackbar.Add("Failed to change PIN. Current PIN is incorrect.", Severity.Error);
+			}
+		}
+		catch (ArgumentException argEx)
+		{
+			newPinError = argEx.Message;
+			Snackbar.Add(argEx.Message, Severity.Warning);
+			System.Diagnostics.Debug.WriteLine($"Argument exception: {argEx}");
+		}
+		catch (Exception ex)
+		{
+			var errorMessage = $"Error changing PIN: {ex.Message}";
+			Snackbar.Add(errorMessage, Severity.Error);
+			System.Diagnostics.Debug.WriteLine($"Exception in ChangePinAsync: {ex}");
+			System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+
+			if (ex.InnerException != null)
+			{
+				System.Diagnostics.Debug.WriteLine($"Inner exception: {ex.InnerException.Message}");
+			}
+		}
+		finally
+		{
+			isChangingPin = false;
+			StateHasChanged();
+		}
+	}
 }
